@@ -49,7 +49,6 @@ export default function App() {
         <Stack.Screen name="DisasterRelief" component={DisasterRelief} />
         <Stack.Screen name="HomePage" component={HomePage}/>
         <Stack.Screen name="FarmersDashboard" component={FarmersDashboard}/>
-        <Stack.Screen name="FarmersForum" component={FarmersForum}/>
         <Stack.Screen name="PurchaseDetails" component={PurchaseDetails} />
         <Stack.Screen name="Oldage" component={OldAgeHomesDashboard} />
       </Stack.Navigator>
