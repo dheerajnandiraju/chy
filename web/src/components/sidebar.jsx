@@ -8,7 +8,6 @@ import { useRouter } from "next/navigation";
 
 const SidebarComponent = () => {
   const router = useRouter();
-  const [expanded, setExpanded] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   // Define the navigation items
@@ -46,21 +45,11 @@ const SidebarComponent = () => {
   };
 
   return (
-    <aside
-      onMouseEnter={() => setExpanded(true)}
-      onMouseLeave={() => setExpanded(false)}
-      className={`fixed left-0 top-0 h-screen border-r bg-black transition-all duration-300 ${
-        expanded ? "w-64" : "w-16"
-      }`}
-    >
+    <aside className="fixed left-0 top-0 h-screen w-64 border-r bg-black">
       <div className="flex h-full flex-col">
         {/* Title */}
-        <div
-          className={`p-4 text-white font-bold text-xl flex items-center justify-center ${
-            expanded ? "w-64" : "w-16"
-          }`}
-        >
-          <span className={`${expanded ? "block" : "hidden"}`}>FOOD CENTER</span>
+        <div className="p-4 text-white font-bold text-xl flex items-center justify-center">
+          <span>FOOD CENTER</span>
         </div>
 
         {/* Navigation Items */}
@@ -76,18 +65,7 @@ const SidebarComponent = () => {
                 whileTap={{ scale: 0.95 }}
               >
                 {item.icon}
-                <span
-                  className={`ml-4 transition-opacity ${
-                    expanded ? "opacity-100" : "opacity-0"
-                  }`}
-                >
-                  {item.name}
-                </span>
-                {!expanded && (
-                  <span className="absolute left-full ml-2 rounded-md bg-white px-2 py-1 text-xs text-black opacity-0 transition-opacity group-hover:opacity-100">
-                    {item.name}
-                  </span>
-                )}
+                <span className="ml-4">{item.name}</span>
               </motion.button>
             </Link>
           ))}
@@ -106,18 +84,7 @@ const SidebarComponent = () => {
               whileTap={{ scale: 0.95 }}
             >
               {item.icon}
-              <span
-                className={`ml-4 transition-opacity ${
-                  expanded ? "opacity-100" : "opacity-0"
-                }`}
-              >
-                {item.name}
-              </span>
-              {!expanded && (
-                <span className="absolute left-full ml-2 rounded-md bg-white px-2 py-1 text-xs text-black opacity-0 transition-opacity group-hover:opacity-100">
-                  {item.name}
-                </span>
-              )}
+              <span className="ml-4">{item.name}</span>
             </motion.button>
           ))}
           
@@ -133,18 +100,7 @@ const SidebarComponent = () => {
               whileTap={{ scale: 0.95 }}
             >
               <LogOut className="h-5 w-5" />
-              <span
-                className={`ml-4 transition-opacity ${
-                  expanded ? "opacity-100" : "opacity-0"
-                }`}
-              >
-                Logout
-              </span>
-              {!expanded && (
-                <span className="absolute left-full ml-2 rounded-md bg-white px-2 py-1 text-xs text-black opacity-0 transition-opacity group-hover:opacity-100">
-                  Logout
-                </span>
-              )}
+              <span className="ml-4">Logout</span>
             </motion.button>
           ) : (
             <motion.button
@@ -157,18 +113,7 @@ const SidebarComponent = () => {
               whileTap={{ scale: 0.95 }}
             >
               <LogOut className="h-5 w-5" />
-              <span
-                className={`ml-4 transition-opacity ${
-                  expanded ? "opacity-100" : "opacity-0"
-                }`}
-              >
-                Login
-              </span>
-              {!expanded && (
-                <span className="absolute left-full ml-2 rounded-md bg-white px-2 py-1 text-xs text-black opacity-0 transition-opacity group-hover:opacity-100">
-                  Login
-                </span>
-              )}
+              <span className="ml-4">Login</span>
             </motion.button>
           )}
         </div>

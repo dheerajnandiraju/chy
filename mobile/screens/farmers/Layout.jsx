@@ -5,9 +5,9 @@ import Icon from 'react-native-vector-icons/Ionicons';
 
 const { width } = Dimensions.get('window');
 
-const Footer = ({ navigation, isDriver }) => {
+const Footer = ({ navigation }) => {
   const route = useRoute();
-  const [activeTab, setActiveTab] = useState('Home');
+  const [activeTab, setActiveTab] = useState('FarmersDashboard');
 
   useEffect(() => {
     setActiveTab(route.name);
@@ -17,43 +17,41 @@ const Footer = ({ navigation, isDriver }) => {
 
   return (
     <View style={styles.footer}>
-      {/* Home Tab */}
-      <TouchableOpacity style={styles.footerItem} onPress={() => navigation.navigate('HomePage')}>
-        <Icon name="home-outline" size={24} color={isActive('HomePag') ? '#007bff' : '#777'} />
-        <Text style={[styles.footerText, isActive('Home') && styles.activeText]}>Home</Text>
+      {/* Farmers Dashboard Tab */}
+      <TouchableOpacity 
+        style={styles.footerItem} 
+        onPress={() => navigation.navigate('FarmersDashboard')}>
+        <Icon name="home-outline" size={24} color={isActive('FarmersDashboard') ? '#007bff' : '#777'} />
+        <Text style={[styles.footerText, isActive('FarmersDashboard') && styles.activeText]}>Dashboard</Text>
       </TouchableOpacity>
-
-      {/* Dashboard Tab */}
-      <TouchableOpacity style={styles.footerItem} onPress={() => navigation.navigate('RestaurantsDashboard')}>
-        <Icon name="apps-outline" size={24} color={isActive('Dashboard') ? '#007bff' : '#777'} />
-        <Text style={[styles.footerText, isActive('Dashboard') && styles.activeText]}>Dashboard</Text>
+      <TouchableOpacity 
+        style={styles.footerItem} 
+        onPress={() => navigation.navigate('FarmersForum')}>
+        <Icon name="chatbox-outline" size={24} color={isActive('FarmersForum') ? '#007bff' : '#777'} />
+        <Text style={[styles.footerText, isActive('FarmersForum') && styles.activeText]}>Forum</Text>
       </TouchableOpacity>
-
-      {/* Leaderboard Tab */}
-      <TouchableOpacity style={styles.footerItem} onPress={() => navigation.navigate('RestaurnatsLeaderboard')}>
-        <Icon name="trophy-outline" size={24} color={isActive('Leaderboard') ? '#007bff' : '#777'} />
-        <Text style={[styles.footerText, isActive('Leaderboard') && styles.activeText]}>Leaderboard</Text>
+      {/* notification Tab */}
+      <TouchableOpacity
+        style={styles.footerItem}
+        onPress={() => navigation.navigate('Notifications')}>
+        <Icon name="notifications-outline" size={24} color={isActive('Notifications') ? '#007bff' : '#777'} />
+        <Text style={[styles.footerText, isActive('Notifications') && styles.activeText]}>Notifications</Text>
       </TouchableOpacity>
-
-      {/* Statistics Tab */}
-      <TouchableOpacity style={styles.footerItem} onPress={() => navigation.navigate('RestaurnatsStatistics')}>
-        <Icon name="bar-chart-outline" size={24} color={isActive('Statistics') ? '#007bff' : '#777'} />
-        <Text style={[styles.footerText, isActive('Statistics') && styles.activeText]}>Statistics</Text>
+      <TouchableOpacity 
+        style={styles.footerItem} 
+        onPress={() => navigation.navigate('FarmerResources')}>
+        <Icon name="file-tray-outline" size={24} color={isActive('FarmerResources') ? '#007bff' : '#777'} />
+        <Text style={[styles.footerText, isActive('FarmerResources') && styles.activeText]}>Resources</Text>
       </TouchableOpacity>
-
-      {/* Profile Tab (Common for both Driver and Passenger) */}
-     
     </View>
   );
 };
 
 const Layout = ({ children = null, navigation = {} }) => {
-  const isDriver = false; // Determine user role (driver/passenger)
-
   return (
     <View style={styles.container}>
       <View style={styles.content}>{children}</View>
-      <Footer navigation={navigation} isDriver={isDriver} />
+      <Footer navigation={navigation} />
     </View>
   );
 };
@@ -61,7 +59,6 @@ const Layout = ({ children = null, navigation = {} }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 30,
   },
   content: {
     flex: 1,
@@ -88,11 +85,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 4,
     textAlign: 'center',
-  },
-  activeIconBackground: {
-    backgroundColor: '#e0f7ff',
-    padding: 8,
-    borderRadius: 16,
   },
   activeText: {
     color: '#007bff',
