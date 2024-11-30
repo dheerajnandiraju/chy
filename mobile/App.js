@@ -7,19 +7,21 @@ import RegisterScreen from './screens/RegisterScreen';
 import FarmersDashboard from './screens/farmers/FarmersDashboard';
 import FarmersForum from './screens/farmers/FarmersForum';
 import PurchaseDetails from './screens/farmers/PurchaseDetails';
+import OldAgeHomesDashboard from './screens/oldage/Oldage';
 
 const Stack = createStackNavigator();
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="FarmersDashboard" screenOptions={{headerShown: false}}>
+      <Stack.Navigator initialRouteName="Oldage" screenOptions={{headerShown: false}}>
         <Stack.Screen name="LandingPage" component={LandingPage} />
         <Stack.Screen name="LoginScreen" component={LoginScreen}/>
         <Stack.Screen name="RegisterScreen" component={RegisterScreen}/>
         <Stack.Screen name="FarmersDashboard" component={FarmersDashboard}/>
         <Stack.Screen name="FarmersForum" component={FarmersForum}/>
         <Stack.Screen name="PurchaseDetails" component={PurchaseDetails} />
+        <Stack.Screen name="Oldage" component={OldAgeHomesDashboard} />
       </Stack.Navigator>
     </NavigationContainer>
   );
