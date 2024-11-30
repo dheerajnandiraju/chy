@@ -8,13 +8,14 @@ import FarmersDashboard from './screens/farmers/FarmersDashboard';
 import FarmersForum from './screens/farmers/FarmersForum';
 import PurchaseDetails from './screens/farmers/PurchaseDetails';
 import OldAgeHomesDashboard from './screens/oldage/Oldage';
+import Quality from './screens/oldage/Quality';
 
 const Stack = createStackNavigator();
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Oldage" screenOptions={{headerShown: false}}>
+      <Stack.Navigator initialRouteName="Quality" screenOptions={{headerShown: false}}>
         <Stack.Screen name="LandingPage" component={LandingPage} />
         <Stack.Screen name="LoginScreen" component={LoginScreen}/>
         <Stack.Screen name="RegisterScreen" component={RegisterScreen}/>
@@ -22,6 +23,7 @@ export default function App() {
         <Stack.Screen name="FarmersForum" component={FarmersForum}/>
         <Stack.Screen name="PurchaseDetails" component={PurchaseDetails} />
         <Stack.Screen name="Oldage" component={OldAgeHomesDashboard} />
+        <Stack.Screen name="Quality" component={Quality} /> 
       </Stack.Navigator>
     </NavigationContainer>
   );
