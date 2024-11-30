@@ -42,7 +42,6 @@ import {
 import {
   Pagination,
   PaginationContent,
-  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
   PaginationNext,
@@ -50,69 +49,84 @@ import {
 } from "@/components/ui/pagination"
 
 const formSchema = z.object({
-  name: z.string().min(2, {
-    message: "Name must be at least 2 characters.",
+  farmerName: z.string().min(2, {
+    message: "Farmer name must be at least 2 characters.",
   }),
-  location: z.string().min(2, {
-    message: "Location must be at least 2 characters.",
+  product: z.string().min(2, {
+    message: "Product name must be at least 2 characters.",
   }),
-  contact: z.string().email({
-    message: "Must be a valid email address.",
+  quantity: z.number().positive({
+    message: "Quantity must be a positive number.",
   }),
-  status: z.enum(["Active", "Inactive"]),
+  unit: z.string().min(1, {
+    message: "Unit is required.",
+  }),
+  msp: z.number().positive({
+    message: "MSP must be a positive number.",
+  }),
+  status: z.enum(["Available", "Sold", "Withdrawn"]),
 })
 
-const NgoPage = () => {
-  const [ngos, setNgos] = useState([
+const FarmerPage = () => {
+  const [farmers, setFarmers] = useState([
     {
       id: 1,
-      name: "Green Earth Foundation",
-      location: "New York",
-      contact: "contact@greenearth.org",
-      status: "Active",
+      farmerName: "John Doe",
+      product: "Wheat",
+      quantity: 1000,
+      unit: "kg",
+      msp: 20.50,
+      status: "Available",
     },
     {
       id: 2,
-      name: "Health for All",
-      location: "Los Angeles",
-      contact: "info@healthforall.org",
-      status: "Inactive",
+      farmerName: "Jane Smith",
+      product: "Rice",
+      quantity: 1500,
+      unit: "kg",
+      msp: 25.75,
+      status: "Sold",
     },
     {
       id: 3,
-      name: "Educate Children",
-      location: "San Francisco",
-      contact: "support@educatechildren.org",
-      status: "Active",
+      farmerName: "Bob Johnson",
+      product: "Corn",
+      quantity: 800,
+      unit: "kg",
+      msp: 18.25,
+      status: "Available",
     },
-    // Add more NGOs as needed
+    // Add more farmers as needed
   ])
 
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("All")
-  const [sortColumn, setSortColumn] = useState("name")
+  const [sortColumn, setSortColumn] = useState("farmerName")
   const [sortDirection, setSortDirection] = useState("asc")
   const [currentPage, setCurrentPage] = useState(1)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [editingNgo, setEditingNgo] = useState(null)
+  const [editingFarmer, setEditingFarmer] = useState(null)
 
   const itemsPerPage = 5
 
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      location: "",
-      contact: "",
-      status: "Active",
+      farmerName: "",
+      product: "",
+      quantity: 0,
+      unit: "kg",
+      msp: 0,
+      status: "Available",
     },
   })
 
-  const filteredNgos = ngos
+  const filteredFarmers = farmers
     .filter(
-      (ngo) =>
-        ngo.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-        (statusFilter === "All" || ngo.status === statusFilter)
+      (farmer) =>
+        (farmer.farmerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+         farmer.product.toLowerCase().includes(searchTerm.toLowerCase())) &&
+        (statusFilter === "All" || farmer.status === statusFilter)
     )
     .sort((a, b) => {
       if (a[sortColumn] < b[sortColumn]) return sortDirection === "asc" ? -1 : 1
@@ -120,12 +134,12 @@ const NgoPage = () => {
       return 0
     })
 
-  const paginatedNgos = filteredNgos.slice(
+  const paginatedFarmers = filteredFarmers.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   )
 
-  const totalPages = Math.ceil(filteredNgos.length / itemsPerPage)
+  const totalPages = Math.ceil(filteredFarmers.length / itemsPerPage)
 
   const handleSort = (column) => {
     if (column === sortColumn) {
@@ -137,27 +151,27 @@ const NgoPage = () => {
   }
 
   const handleAddEdit = (data) => {
-    if (editingNgo) {
-      setNgos(
-        ngos.map((n) =>
-          n.id === editingNgo.id ? { ...n, ...data } : n
+    if (editingFarmer) {
+      setFarmers(
+        farmers.map((f) =>
+          f.id === editingFarmer.id ? { ...f, ...data } : f
         )
       )
     } else {
-      setNgos([...ngos, { id: Date.now(), ...data }])
+      setFarmers([...farmers, { id: Date.now(), ...data }])
     }
     setIsDialogOpen(false)
-    setEditingNgo(null)
+    setEditingFarmer(null)
     form.reset()
   }
 
   const handleDelete = (id) => {
-    setNgos(ngos.filter((n) => n.id !== id))
+    setFarmers(farmers.filter((f) => f.id !== id))
   }
 
-  const openEditDialog = (ngo) => {
-    setEditingNgo(ngo)
-    form.reset(ngo)
+  const openEditDialog = (farmer) => {
+    setEditingFarmer(farmer)
+    form.reset(farmer)
     setIsDialogOpen(true)
   }
 
@@ -168,13 +182,13 @@ const NgoPage = () => {
       transition={{ duration: 0.5 }}
       className="container mx-auto p-6"
     >
-      <h1 className="text-3xl font-bold text-center mb-6">NGOs</h1>
+      <h1 className="text-3xl font-bold text-center mb-6">Farmers' Products</h1>
 
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center space-x-2">
           <Input
             type="text"
-            placeholder="Search NGOs"
+            placeholder="Search Farmers or Products"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-64"
@@ -188,33 +202,34 @@ const NgoPage = () => {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="All">All</SelectItem>
-              <SelectItem value="Active">Active</SelectItem>
-              <SelectItem value="Inactive">Inactive</SelectItem>
+              <SelectItem value="Available">Available</SelectItem>
+              <SelectItem value="Sold">Sold</SelectItem>
+              <SelectItem value="Withdrawn">Withdrawn</SelectItem>
             </SelectContent>
           </Select>
         </div>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button onClick={() => setEditingNgo(null)}>
-              <Plus className="mr-2 h-4 w-4" /> Add NGO
+            <Button onClick={() => setEditingFarmer(null)}>
+              <Plus className="mr-2 h-4 w-4" /> Add Farmer Product
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
               <DialogTitle>
-                {editingNgo ? "Edit NGO" : "Add NGO"}
+                {editingFarmer ? "Edit Farmer Product" : "Add Farmer Product"}
               </DialogTitle>
             </DialogHeader>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(handleAddEdit)} className="space-y-8">
                 <FormField
                   control={form.control}
-                  name="name"
+                  name="farmerName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Name</FormLabel>
+                      <FormLabel>Farmer Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="Green Earth Foundation" {...field} />
+                        <Input placeholder="John Doe" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -222,12 +237,12 @@ const NgoPage = () => {
                 />
                 <FormField
                   control={form.control}
-                  name="location"
+                  name="product"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Location</FormLabel>
+                      <FormLabel>Product</FormLabel>
                       <FormControl>
-                        <Input placeholder="New York" {...field} />
+                        <Input placeholder="Wheat" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -235,12 +250,47 @@ const NgoPage = () => {
                 />
                 <FormField
                   control={form.control}
-                  name="contact"
+                  name="quantity"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Contact</FormLabel>
+                      <FormLabel>Quantity</FormLabel>
                       <FormControl>
-                        <Input placeholder="contact@example.org" {...field} />
+                        <Input type="number" placeholder="1000" {...field} onChange={e => field.onChange(+e.target.value)} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="unit"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Unit</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a unit" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="kg">kg</SelectItem>
+                          <SelectItem value="ton">ton</SelectItem>
+                          <SelectItem value="quintal">quintal</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="msp"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>MSP (₹)</FormLabel>
+                      <FormControl>
+                        <Input type="number" step="0.01" placeholder="20.50" {...field} onChange={e => field.onChange(+e.target.value)} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -259,8 +309,9 @@ const NgoPage = () => {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="Active">Active</SelectItem>
-                          <SelectItem value="Inactive">Inactive</SelectItem>
+                          <SelectItem value="Available">Available</SelectItem>
+                          <SelectItem value="Sold">Sold</SelectItem>
+                          <SelectItem value="Withdrawn">Withdrawn</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -278,14 +329,17 @@ const NgoPage = () => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead onClick={() => handleSort("name")} className="cursor-pointer">
-                Name {sortColumn === "name" && (sortDirection === "asc" ? "▲" : "▼")}
+              <TableHead onClick={() => handleSort("farmerName")} className="cursor-pointer">
+                Farmer Name {sortColumn === "farmerName" && (sortDirection === "asc" ? "▲" : "▼")}
               </TableHead>
-              <TableHead onClick={() => handleSort("location")} className="cursor-pointer">
-                Location {sortColumn === "location" && (sortDirection === "asc" ? "▲" : "▼")}
+              <TableHead onClick={() => handleSort("product")} className="cursor-pointer">
+                Product {sortColumn === "product" && (sortDirection === "asc" ? "▲" : "▼")}
               </TableHead>
-              <TableHead onClick={() => handleSort("contact")} className="cursor-pointer">
-                Contact {sortColumn === "contact" && (sortDirection === "asc" ? "▲" : "▼")}
+              <TableHead onClick={() => handleSort("quantity")} className="cursor-pointer">
+                Quantity {sortColumn === "quantity" && (sortDirection === "asc" ? "▲" : "▼")}
+              </TableHead>
+              <TableHead onClick={() => handleSort("msp")} className="cursor-pointer">
+                MSP (₹) {sortColumn === "msp" && (sortDirection === "asc" ? "▲" : "▼")}
               </TableHead>
               <TableHead onClick={() => handleSort("status")} className="cursor-pointer">
                 Status {sortColumn === "status" && (sortDirection === "asc" ? "▲" : "▼")}
@@ -294,25 +348,26 @@ const NgoPage = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {paginatedNgos.map((ngo) => (
-              <TableRow key={ngo.id}>
-                <TableCell>{ngo.name}</TableCell>
-                <TableCell>{ngo.location}</TableCell>
-                <TableCell>{ngo.contact}</TableCell>
-                <TableCell>{ngo.status}</TableCell>
+            {paginatedFarmers.map((farmer) => (
+              <TableRow key={farmer.id}>
+                <TableCell>{farmer.farmerName}</TableCell>
+                <TableCell>{farmer.product}</TableCell>
+                <TableCell>{farmer.quantity} {farmer.unit}</TableCell>
+                <TableCell>{farmer.msp.toFixed(2)}</TableCell>
+                <TableCell>{farmer.status}</TableCell>
                 <TableCell>
                   <Button
                     variant="outline"
                     size="sm"
                     className="mr-2"
-                    onClick={() => openEditDialog(ngo)}
+                    onClick={() => openEditDialog(farmer)}
                   >
                     Edit
                   </Button>
                   <Button
                     variant="destructive"
                     size="sm"
-                    onClick={() => handleDelete(ngo.id)}
+                    onClick={() => handleDelete(farmer.id)}
                   >
                     Delete
                   </Button>
@@ -353,4 +408,4 @@ const NgoPage = () => {
   )
 }
 
-export default NgoPage
+export default FarmerPage

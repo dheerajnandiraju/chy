@@ -7,6 +7,7 @@ import RegisterScreen from './screens/RegisterScreen';
 import FarmersDashboard from './screens/farmers/FarmersDashboard';
 import FarmersForum from './screens/farmers/FarmersForum';
 import PurchaseDetails from './screens/farmers/PurchaseDetails';
+import TemporaryMap from './screens/Maps';
 
 const Stack = createStackNavigator();
 
@@ -20,6 +21,7 @@ export default function App() {
         <Stack.Screen name="FarmersDashboard" component={FarmersDashboard}/>
         <Stack.Screen name="FarmersForum" component={FarmersForum}/>
         <Stack.Screen name="PurchaseDetails" component={PurchaseDetails} />
+        <Stack.Screen name="TemporaryMap" component={TemporaryMap} />
       </Stack.Navigator>
     </NavigationContainer>
   );

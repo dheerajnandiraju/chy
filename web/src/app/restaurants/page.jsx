@@ -42,7 +42,6 @@ import {
 import {
   Pagination,
   PaginationContent,
-  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
   PaginationNext,
@@ -51,41 +50,47 @@ import {
 
 const formSchema = z.object({
   name: z.string().min(2, {
-    message: "Name must be at least 2 characters.",
+    message: "Restaurant name must be at least 2 characters.",
   }),
-  location: z.string().min(2, {
-    message: "Location must be at least 2 characters.",
+  cuisine: z.string().min(2, {
+    message: "Cuisine type must be at least 2 characters.",
   }),
-  contact: z.string().email({
-    message: "Must be a valid email address.",
+  address: z.string().min(5, {
+    message: "Address must be at least 5 characters.",
   }),
-  status: z.enum(["Active", "Inactive"]),
+  contact: z.string().min(10, {
+    message: "Contact number must be at least 10 characters.",
+  }),
+  status: z.enum(["Open", "Closed", "Busy"]),
 })
 
-const NgoPage = () => {
-  const [ngos, setNgos] = useState([
+const RestaurantPage = () => {
+  const [restaurants, setRestaurants] = useState([
     {
       id: 1,
-      name: "Green Earth Foundation",
-      location: "New York",
-      contact: "contact@greenearth.org",
-      status: "Active",
+      name: "Tasty Bites",
+      cuisine: "Italian",
+      address: "123 Main St, City",
+      contact: "123-456-7890",
+      status: "Open",
     },
     {
       id: 2,
-      name: "Health for All",
-      location: "Los Angeles",
-      contact: "info@healthforall.org",
-      status: "Inactive",
+      name: "Spice Garden",
+      cuisine: "Indian",
+      address: "456 Oak Ave, Town",
+      contact: "987-654-3210",
+      status: "Busy",
     },
     {
       id: 3,
-      name: "Educate Children",
-      location: "San Francisco",
-      contact: "support@educatechildren.org",
-      status: "Active",
+      name: "Sushi Express",
+      cuisine: "Japanese",
+      address: "789 Pine Rd, Village",
+      contact: "456-789-0123",
+      status: "Closed",
     },
-    // Add more NGOs as needed
+    // Add more restaurants as needed
   ])
 
   const [searchTerm, setSearchTerm] = useState("")
@@ -94,7 +99,7 @@ const NgoPage = () => {
   const [sortDirection, setSortDirection] = useState("asc")
   const [currentPage, setCurrentPage] = useState(1)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [editingNgo, setEditingNgo] = useState(null)
+  const [editingRestaurant, setEditingRestaurant] = useState(null)
 
   const itemsPerPage = 5
 
@@ -102,17 +107,19 @@ const NgoPage = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
-      location: "",
+      cuisine: "",
+      address: "",
       contact: "",
-      status: "Active",
+      status: "Open",
     },
   })
 
-  const filteredNgos = ngos
+  const filteredRestaurants = restaurants
     .filter(
-      (ngo) =>
-        ngo.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-        (statusFilter === "All" || ngo.status === statusFilter)
+      (restaurant) =>
+        (restaurant.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+         restaurant.cuisine.toLowerCase().includes(searchTerm.toLowerCase())) &&
+        (statusFilter === "All" || restaurant.status === statusFilter)
     )
     .sort((a, b) => {
       if (a[sortColumn] < b[sortColumn]) return sortDirection === "asc" ? -1 : 1
@@ -120,12 +127,12 @@ const NgoPage = () => {
       return 0
     })
 
-  const paginatedNgos = filteredNgos.slice(
+  const paginatedRestaurants = filteredRestaurants.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   )
 
-  const totalPages = Math.ceil(filteredNgos.length / itemsPerPage)
+  const totalPages = Math.ceil(filteredRestaurants.length / itemsPerPage)
 
   const handleSort = (column) => {
     if (column === sortColumn) {
@@ -137,27 +144,27 @@ const NgoPage = () => {
   }
 
   const handleAddEdit = (data) => {
-    if (editingNgo) {
-      setNgos(
-        ngos.map((n) =>
-          n.id === editingNgo.id ? { ...n, ...data } : n
+    if (editingRestaurant) {
+      setRestaurants(
+        restaurants.map((r) =>
+          r.id === editingRestaurant.id ? { ...r, ...data } : r
         )
       )
     } else {
-      setNgos([...ngos, { id: Date.now(), ...data }])
+      setRestaurants([...restaurants, { id: Date.now(), ...data }])
     }
     setIsDialogOpen(false)
-    setEditingNgo(null)
+    setEditingRestaurant(null)
     form.reset()
   }
 
   const handleDelete = (id) => {
-    setNgos(ngos.filter((n) => n.id !== id))
+    setRestaurants(restaurants.filter((r) => r.id !== id))
   }
 
-  const openEditDialog = (ngo) => {
-    setEditingNgo(ngo)
-    form.reset(ngo)
+  const openEditDialog = (restaurant) => {
+    setEditingRestaurant(restaurant)
+    form.reset(restaurant)
     setIsDialogOpen(true)
   }
 
@@ -168,13 +175,13 @@ const NgoPage = () => {
       transition={{ duration: 0.5 }}
       className="container mx-auto p-6"
     >
-      <h1 className="text-3xl font-bold text-center mb-6">NGOs</h1>
+      <h1 className="text-3xl font-bold text-center mb-6">Restaurants</h1>
 
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center space-x-2">
           <Input
             type="text"
-            placeholder="Search NGOs"
+            placeholder="Search Restaurants or Cuisines"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-64"
@@ -188,21 +195,22 @@ const NgoPage = () => {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="All">All</SelectItem>
-              <SelectItem value="Active">Active</SelectItem>
-              <SelectItem value="Inactive">Inactive</SelectItem>
+              <SelectItem value="Open">Open</SelectItem>
+              <SelectItem value="Closed">Closed</SelectItem>
+              <SelectItem value="Busy">Busy</SelectItem>
             </SelectContent>
           </Select>
         </div>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button onClick={() => setEditingNgo(null)}>
-              <Plus className="mr-2 h-4 w-4" /> Add NGO
+            <Button onClick={() => setEditingRestaurant(null)}>
+              <Plus className="mr-2 h-4 w-4" /> Add Restaurant
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
               <DialogTitle>
-                {editingNgo ? "Edit NGO" : "Add NGO"}
+                {editingRestaurant ? "Edit Restaurant" : "Add Restaurant"}
               </DialogTitle>
             </DialogHeader>
             <Form {...form}>
@@ -212,9 +220,9 @@ const NgoPage = () => {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Name</FormLabel>
+                      <FormLabel>Restaurant Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="Green Earth Foundation" {...field} />
+                        <Input placeholder="Tasty Bites" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -222,12 +230,25 @@ const NgoPage = () => {
                 />
                 <FormField
                   control={form.control}
-                  name="location"
+                  name="cuisine"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Location</FormLabel>
+                      <FormLabel>Cuisine</FormLabel>
                       <FormControl>
-                        <Input placeholder="New York" {...field} />
+                        <Input placeholder="Italian" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="address"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Address</FormLabel>
+                      <FormControl>
+                        <Input placeholder="123 Main St, City" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -240,7 +261,7 @@ const NgoPage = () => {
                     <FormItem>
                       <FormLabel>Contact</FormLabel>
                       <FormControl>
-                        <Input placeholder="contact@example.org" {...field} />
+                        <Input placeholder="123-456-7890" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -259,8 +280,9 @@ const NgoPage = () => {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="Active">Active</SelectItem>
-                          <SelectItem value="Inactive">Inactive</SelectItem>
+                          <SelectItem value="Open">Open</SelectItem>
+                          <SelectItem value="Closed">Closed</SelectItem>
+                          <SelectItem value="Busy">Busy</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -281,8 +303,11 @@ const NgoPage = () => {
               <TableHead onClick={() => handleSort("name")} className="cursor-pointer">
                 Name {sortColumn === "name" && (sortDirection === "asc" ? "▲" : "▼")}
               </TableHead>
-              <TableHead onClick={() => handleSort("location")} className="cursor-pointer">
-                Location {sortColumn === "location" && (sortDirection === "asc" ? "▲" : "▼")}
+              <TableHead onClick={() => handleSort("cuisine")} className="cursor-pointer">
+                Cuisine {sortColumn === "cuisine" && (sortDirection === "asc" ? "▲" : "▼")}
+              </TableHead>
+              <TableHead onClick={() => handleSort("address")} className="cursor-pointer">
+                Address {sortColumn === "address" && (sortDirection === "asc" ? "▲" : "▼")}
               </TableHead>
               <TableHead onClick={() => handleSort("contact")} className="cursor-pointer">
                 Contact {sortColumn === "contact" && (sortDirection === "asc" ? "▲" : "▼")}
@@ -294,25 +319,26 @@ const NgoPage = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {paginatedNgos.map((ngo) => (
-              <TableRow key={ngo.id}>
-                <TableCell>{ngo.name}</TableCell>
-                <TableCell>{ngo.location}</TableCell>
-                <TableCell>{ngo.contact}</TableCell>
-                <TableCell>{ngo.status}</TableCell>
+            {paginatedRestaurants.map((restaurant) => (
+              <TableRow key={restaurant.id}>
+                <TableCell>{restaurant.name}</TableCell>
+                <TableCell>{restaurant.cuisine}</TableCell>
+                <TableCell>{restaurant.address}</TableCell>
+                <TableCell>{restaurant.contact}</TableCell>
+                <TableCell>{restaurant.status}</TableCell>
                 <TableCell>
                   <Button
                     variant="outline"
                     size="sm"
                     className="mr-2"
-                    onClick={() => openEditDialog(ngo)}
+                    onClick={() => openEditDialog(restaurant)}
                   >
                     Edit
                   </Button>
                   <Button
                     variant="destructive"
                     size="sm"
-                    onClick={() => handleDelete(ngo.id)}
+                    onClick={() => handleDelete(restaurant.id)}
                   >
                     Delete
                   </Button>
@@ -353,4 +379,4 @@ const NgoPage = () => {
   )
 }
 
-export default NgoPage
+export default RestaurantPage
