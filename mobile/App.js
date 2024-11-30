@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import LandingPage from './screens/LandingPage';
 import FarmersDashboard from './screens/farmers/FarmersDashboard';
-import FarmersForums from './screens/farmers/FarmersForum';
+import ForumsScreen from './screens/farmers/FarmersForum';
 import LoginScreen from './screens/LoginScreen';
 import RestaurantsDashboard from './screens/Restaurants/RestaurantsDashboard';
 import RegisterScreen from './screens/RegisterScreen';
@@ -33,7 +33,7 @@ export default function App() {
       <Stack.Navigator initialRouteName="Oldage" screenOptions={{headerShown: false}}>
         <Stack.Screen name="LandingPage" component={LandingPage} />
   
-        <Stack.Screen name="FarmersForums" component={FarmersForums}/>
+        <Stack.Screen name="FarmersForums" component={ForumsScreen}/>
         <Stack.Screen name="LoginScreen" component={LoginScreen}/>
         <Stack.Screen name="RegisterScreen" component={RegisterScreen}/>
 
@@ -49,7 +49,6 @@ export default function App() {
         <Stack.Screen name="DisasterRelief" component={DisasterRelief} />
         <Stack.Screen name="HomePage" component={HomePage}/>
         <Stack.Screen name="FarmersDashboard" component={FarmersDashboard}/>
-        <Stack.Screen name="FarmersForum" component={FarmersForum}/>
         <Stack.Screen name="PurchaseDetails" component={PurchaseDetails} />
         <Stack.Screen name="Oldage" component={OldAgeHomesDashboard} />
       </Stack.Navigator>
