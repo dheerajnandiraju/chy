@@ -37,7 +37,7 @@ const LoginScreen = () => {
       setLoading(true);
 
       // Make an API request to your backend for authentication
-      const response = await fetch('http://192.168.43.41:3030/api/login', {
+      const response = await fetch('http://192.168.43.41:3000/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -55,7 +55,7 @@ const LoginScreen = () => {
       if (response.status === 200) {
         // Successful login
         Alert.alert('Success', 'Login Successful');
-        navigation.navigate('Trips'); // Navigate to Trips screen
+        navigation.navigate('HomePage'); // Navigate to Trips screen
       } else {
         // Display error from the server
         setErrorMessage(data.message || 'Invalid email or password');

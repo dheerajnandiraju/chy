@@ -34,6 +34,7 @@ router.post('/signup', async (req, res) => {
       const newRestaurant = new Restaurant({
         userId: newUser._id,
         name: fullName,
+        email:email,
         location:address,
         numberOfDeliveries: 0,
         numberOfMembersFed: 0,
@@ -44,6 +45,7 @@ router.post('/signup', async (req, res) => {
       const newOrganization = new Organization({
         organizationId: newUser._id,
         name: fullName,
+        email:email,
         location: address,
         phoneNumber:phoneNumber,
       });

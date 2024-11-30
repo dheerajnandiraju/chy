@@ -22,10 +22,6 @@ const SidebarComponent = () => {
     { name: "Emergency Alerts", icon: <Settings className="h-5 w-5" />, path: "/emergency-alerts" },
   ];
 
-  const bottomItems = [
-    { name: "Help", icon: <HelpCircle className="h-5 w-5" />, path: "/help" },
-  ];
-
   // Effect to check localStorage for login state on page load
   useEffect(() => {
     const loggedIn = localStorage.getItem("isLoggedIn") === "true";
@@ -53,13 +49,13 @@ const SidebarComponent = () => {
         </div>
 
         {/* Navigation Items */}
-        <nav className="flex-1 space-y-4 p-4">
+        <nav className="flex-1 gap-4 flex flex-col px-4">
           {navItems.map((item) => (
             <Link key={item.name} href={item.path} passHref>
               <motion.button
-                className="group relative flex w-full items-center rounded-lg px-4 py-2 bg-white text-black hover:bg-gray-100"
+                className="group relative flex w-full items-center rounded-lg px-4 py-2 text-white"
                 whileHover={{
-                  backgroundColor: "rgba(255, 255, 255, 0.8)",
+                  backgroundColor: "#1f2937",
                   transition: { duration: 0.2 },
                 }}
                 whileTap={{ scale: 0.95 }}
@@ -72,29 +68,28 @@ const SidebarComponent = () => {
         </nav>
 
         {/* Bottom Items */}
-        <div className="space-y-2 p-4">
-          {bottomItems.map((item) => (
+        <div className="p-4 flex flex-col gap-4">
+          <Link href="/help" passHref>
             <motion.button
-              key={item.name}
-              className="group relative flex w-full items-center rounded-lg px-4 py-3 bg-white text-black hover:bg-gray-100"
+              className="group relative flex w-full items-center rounded-lg px-4 py-3 text-white"
               whileHover={{
-                backgroundColor: "rgba(255, 255, 255, 0.8)",
+                backgroundColor: "#1f2937",
                 transition: { duration: 0.2 },
               }}
               whileTap={{ scale: 0.95 }}
             >
-              {item.icon}
-              <span className="ml-4">{item.name}</span>
+              <HelpCircle className="h-5 w-5" />
+              <span className="ml-4">Help Center</span>
             </motion.button>
-          ))}
+          </Link>
           
           {/* Logout or Login button */}
           {isLoggedIn ? (
             <motion.button
               onClick={handleLogout}
-              className="group relative flex w-full items-center rounded-lg px-4 py-3 bg-white text-black hover:bg-gray-100"
+              className="group relative flex w-full items-center rounded-lg px-4 py-3 text-white"
               whileHover={{
-                backgroundColor: "rgba(255, 255, 255, 0.8)",
+                backgroundColor: "#1f2937",
                 transition: { duration: 0.2 },
               }}
               whileTap={{ scale: 0.95 }}
@@ -105,9 +100,9 @@ const SidebarComponent = () => {
           ) : (
             <motion.button
               onClick={handleLogin}
-              className="group relative flex w-full items-center rounded-lg px-4 py-3 bg-white text-black hover:bg-gray-100"
+              className="group relative flex w-full items-center rounded-lg px-4 py-3 text-white"
               whileHover={{
-                backgroundColor: "rgba(255, 255, 255, 0.8)",
+                backgroundColor: "#1f2937",
                 transition: { duration: 0.2 },
               }}
               whileTap={{ scale: 0.95 }}
