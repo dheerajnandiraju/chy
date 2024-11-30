@@ -31,7 +31,7 @@ export default function App() {
     <AuthProvider>
     <NavigationContainer>
 
-      <Stack.Navigator initialRouteName="Oldage" screenOptions={{headerShown: false}}>
+      <Stack.Navigator initialRouteName="FoodFridges" screenOptions={{headerShown: false}}>
         <Stack.Screen name="LandingPage" component={LandingPage} />
         <Stack.Screen name="FarmersForums" component={ForumsScreen}/>
         <Stack.Screen name="LoginScreen" component={LoginScreen}/>

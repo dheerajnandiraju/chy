@@ -195,29 +195,29 @@ export default class App extends Component {
     const usersArray = Array.from(this.state.users.values());
 
     return (
-      <View style={styles.container}>
-        <MapView
-          style={styles.map}
-          ref={ref => (this.map = ref)}
-          initialRegion={{
-            latitude: 36.81808,
-            longitude: -98.640297,
-            latitudeDelta: 60.0001,
-            longitudeDelta: 60.0001
-          }}
-        >
-          {usersArray.map((item) => (
-            <Marker
-              key={item.uuid}
-              coordinate={{
-                latitude: item.latitude,
-                longitude: item.longitude
-              }}
-              pinColor="blue"  // Simple color marker
-              title={`User ${item.uuid}`}
-            />
-          ))}
-        </MapView>
+      // <View style={styles.container}>
+      //   <MapView
+      //     style={styles.map}
+      //     ref={ref => (this.map = ref)}
+      //     initialRegion={{
+      //       latitude: 36.81808,
+      //       longitude: -98.640297,
+      //       latitudeDelta: 60.0001,
+      //       longitudeDelta: 60.0001
+      //     }}
+      //   >
+          // {usersArray.map((item) => (
+          //   <Marker
+          //     key={item.uuid}
+          //     coordinate={{
+          //       latitude: item.latitude,
+          //       longitude: item.longitude
+          //     }}
+          //     pinColor="blue"  // Simple color marker
+          //     title={`User ${item.uuid}`}
+          //   />
+          // ))}
+      //  </MapView>
 
         <View style={styles.topBar}>
           <View style={styles.leftBar}>
@@ -227,49 +227,49 @@ export default class App extends Component {
           </View>
         </View>
 
-        <View style={styles.topBar}>
-          <View style={styles.rightBar}>
-            <Switch
-              value={this.state.allowGPS}
-              style={styles.locationSwitch}
-              onValueChange={this.toggleGPS}
-            />
-          </View>
-        </View>
+        // <View style={styles.topBar}>
+        //   <View style={styles.rightBar}>
+        //     <Switch
+        //       value={this.state.allowGPS}
+        //       style={styles.locationSwitch}
+        //       onValueChange={this.toggleGPS}
+        //     />
+        //   </View>
+        // </View>
 
-        <View style={styles.bottom}>
-          <View style={styles.bottomRow}>   
-            <TouchableOpacity onPress={this.focusLoc}>
-              <Image 
-                style={styles.focusLoc} 
-                source={require('./assets/2.png')}
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
+        // <View style={styles.bottom}>
+        //   <View style={styles.bottomRow}>   
+        //     <TouchableOpacity onPress={this.focusLoc}>
+        //       <Image 
+        //         style={styles.focusLoc} 
+        //         source={require('./assets/2.png')}
+        //       />
+        //     </TouchableOpacity>
+        //   </View>
+        //</View>
 
-        {this.state.locationError && (
-          <View style={styles.errorContainer}>
-            <Text style={styles.errorText}>{this.state.locationError}</Text>
-          </View>
-        )}
-      </View>
+        // {this.state.locationError && (
+        //   <View style={styles.errorContainer}>
+        //     <Text style={styles.errorText}>{this.state.locationError}</Text>
+        //   </View>
+        // )}
+     // </View>
     );
   }
 }
 
-const styles = StyleSheet.create({
-  // ... [previous styles remain the same]
-  errorContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: 'red',
-    padding: 10,
-  },
-  errorText: {
-    color: 'white',
-    textAlign: 'center',
-  },
-});
+// const styles = StyleSheet.create({
+//   // ... [previous styles remain the same]
+//   errorContainer: {
+//     position: 'absolute',
+//     bottom: 0,
+//     left: 0,
+//     right: 0,
+//     backgroundColor: 'red',
+//     padding: 10,
+//   },
+//   errorText: {
+//     color: 'white',
+//     textAlign: 'center',
+//   },
+// });
