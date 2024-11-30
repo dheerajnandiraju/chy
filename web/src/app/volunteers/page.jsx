@@ -35,7 +35,7 @@ const VolunteerPage = () => {
                 className="w-full p-2 rounded-md border border-gray-300"
               />
             </div>
-            <button className="ml-4 bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700">
+            <button className="ml-4 bg-black text-white p-2 rounded-md hover:bg-gray-700">
               Add Volunteer
             </button>
           </div>
@@ -58,10 +58,10 @@ const VolunteerPage = () => {
                     <td className="px-6 py-3">{volunteer.role}</td>
                     <td className="px-6 py-3">{volunteer.status}</td>
                     <td className="px-6 py-3">
-                      <button className="bg-yellow-500 text-white py-1 px-4 rounded-md hover:bg-yellow-600">
+                      <button className="bg-black text-white py-1 px-4 rounded-md hover:bg-green-600">
                         Edit
                       </button>
-                      <button className="ml-2 bg-red-500 text-white py-1 px-4 rounded-md hover:bg-red-600">
+                      <button className="ml-2 bg-red-600 text-white py-1 px-4 rounded-md hover:bg-red-900">
                         Delete
                       </button>
                     </td>
