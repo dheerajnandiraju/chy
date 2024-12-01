@@ -1,43 +1,92 @@
 {
-  "language": "Idioma",
+  "language": "Language",
+
+  "foodFridges": {
+    "header": "Food Fridges",
+    "stats": {
+      "totalFridges": "Total Fridges",
+      "mealsDonated": "Meals Donated",
+      "fridgesNearYou": "Fridges Near You"
+    },
+    "findFridgeSection": {
+      "title": "Find a Fridge",
+      "searchPlaceholder": "Search fridges near you..."
+    },
+    "donateFoodSection": {
+      "title": "Donate Food",
+      "mealDetailsPlaceholder": "Enter meal details (e.g., Pizza, Salad)",
+      "serveForLabel": "Serve For",
+      "serveForOptions": {
+        "select": "Select...",
+        "1": "1",
+        "2": "2",
+        "3": "3"
+      },
+      "expireTimeLabel": "Expire Time",
+      "expireTimeOptions": {
+        "days": "Days",
+        "hours": "Hours"
+      },
+      "donateButton": "Donate Meal"
+    },
+    "map": {
+      "fridgeDescription": "Location of this fridge"
+    }
+  },
+
   "farmers": {
     "title": "Farmers Dashboard",
     "welcome": "Welcome",
     "donated": "Donated",
-    "meals": "meals",
+    "meals": "Meals",
     "tax": "Tax Deductible",
-    "post": "submit a crop for sale",
-    "crop-type": "Crop Type",
-    "crop-type-placeholder": "Enter crop type",
-    "additional-info": "Additional Information",
-    "additional-info-placeholder": "Enter additional information (e.g. quantity, quality, etc.)",
-    "activity-type": "Activity Type",
-    "activity-type-placeholder": "Enter activity type",
-    "activity-type-options": {
+    "post": "Post a crop for sale",
+    "cropType": "Crop Type",
+    "cropTypePlaceholder": "Enter crop type",
+    "additionalInfo": "Additional Information",
+    "additionalInfoPlaceholder": "Enter additional information (e.g., quantity, quality, etc.)",
+    "activityType": "Activity Type",
+    "activityTypePlaceholder": "Enter activity type",
+    "activityTypeOptions": {
       "sale": "Sale",
       "donation": "Donation"
     },
-    "price-offered": "Price Offered (If sale)",
-    "price-offered-placeholder": "Enter price offered",
-    "select-ngo-foodbank": "Select NGO/Foodbank",
-    "select-ngo-foodbank-placeholder": "Select NGO/Foodbank",
-    "select-ngo-foodbank-options": {
+    "priceOffered": "Price Offered (If sale)",
+    "priceOfferedPlaceholder": "Enter price offered",
+    "selectNgoFoodbank": "Select NGO/Foodbank",
+    "selectNgoFoodbankPlaceholder": "Select NGO/Foodbank",
+    "selectNgoFoodbankOptions": {
       "ngo": "NGO",
       "foodbank": "Foodbank"
     },
     "submit": "Post for Sale/Donation",
-    "success": "Produce posted for sale successfully! NGOs and volunteers will be notified.",
-    "donated-success": "Produce posted for donation successfully! NGOs and volunteers will be notified.",
-    "pending-purchases": "Pending Purchases",
+    "pendingPurchases": "Pending Purchases",
     "price": "Price",
     "organization": "Organization",
-    "completed-purchases": "Completed Purchases",
+    "completedPurchases": "Completed Purchases",
     "crop": "Crop",
     "buyer": "Buyer",
-    "quantity": "Quantity",
-    "additional-notes": "Additional Notes",
-    "select-organization": "Select Organization",
-    "update-purchase": "Update Purchase",
-    "close": "Close"
+    "quantity": "Quantity"
+  },
+  "emergencyAlerts": {
+    "raiseEmergency": "Raise an Emergency",
+    "reason": "Reason for Alert (e.g., Fire)",
+    "urgencyLevel": "Urgency Level",
+    "location": "Location",
+    "contactInfo": "Contact Information",
+    "additionalDetails": "Additional Details",
+    "submit": "Raise Emergency",
+    "trackAlerts": "Track Your Alerts",
+    "respond": "Respond",
+    "impactMetrics": "Impact Metrics",
+    "totalAlerts": "Total Alerts",
+    "avgResponseTime": "Avg Response Time",
+    "beneficiaries": "Beneficiaries Reached",
+    "mealsDelivered": "Meals Delivered",
+    "alertStatus": "Alert Status",
+    "inProgress": "In Progress",
+    "resolved": "Resolved",
+    "submitResponse": "Submit Response",
+    "cancel": "Cancel"
   }
 }

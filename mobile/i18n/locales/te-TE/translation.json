@@ -1,37 +1,93 @@
 {
   "language": "భాష",
+
+  "foodFridges": {
+    "header": "ఆహార ఫ్రిడ్జ్‌లు",
+    "stats": {
+      "totalFridges": "మొత్తం ఫ్రిడ్జ్‌లు",
+      "mealsDonated": "దానం చేసిన భోజనాలు",
+      "fridgesNearYou": "మీకు దగ్గర ఫ్రిడ్జ్‌లు"
+    },
+    "findFridgeSection": {
+      "title": "ఫ్రిడ్జ్‌ని కనుగొనండి",
+      "searchPlaceholder": "మీ దగ్గర ఫ్రిడ్జ్‌లు అన్వేషించండి..."
+    },
+    "donateFoodSection": {
+      "title": "ఆహారం దానం చేయండి",
+      "mealDetailsPlaceholder": "భోజనం వివరాలు నమోదు చేయండి (ఉదా: పిజ్జా, సలాడ్)",
+      "serveForLabel": "ఎవరికీ సేవించాలి",
+      "serveForOptions": {
+        "select": "ఎంచుకోండి...",
+        "1": "1",
+        "2": "2",
+        "3": "3"
+      },
+      "expireTimeLabel": "గడువు సమయం",
+      "expireTimeOptions": {
+        "days": "దినాలు",
+        "hours": "గంటలు"
+      },
+      "donateButton": "భోజనం దానం చేయండి"
+    },
+    "map": {
+      "fridgeDescription": "ఈ ఫ్రిడ్జ్ యొక్క స్థానం"
+    }
+  },
+
   "farmers": {
-    "title": "రైతుల డ్యాష్‌బోర్డ్",
+    "title": "వ్యాపారి డాష్‌బోర్డ్",
     "welcome": "స్వాగతం",
     "donated": "దానం చేసిన",
     "meals": "భోజనాలు",
-    "tax": "పన్ను తగ్గించదగిన",
-    "post": "విక్రయానికి పంటను సమర్పించండి",
-    "crop-type": "పంట రకం",
-    "crop-type-placeholder": "పంట రకం నమోదు చేయండి",
-    "additional-info": "అదనపు సమాచారం",
-    "additional-info-placeholder": "అదనపు సమాచారం నమోదు చేయండి (ఉదా: పరిమాణం, నాణ్యత, మొదలైనవి)",
-    "activity-type": "కార్యకలాపం రకం",
-    "activity-type-placeholder": "కార్యకలాపం రకం నమోదు చేయండి",
-    "activity-type-options": {
-      "sale": "విక్రయం",
+    "tax": "పన్ను మినహాయింపు",
+    "post": "మొక్కను అమ్మడానికి పోస్ట్ చేయండి",
+    "cropType": "పంట రకం",
+    "cropTypePlaceholder": "పంట రకం నమోదు చేయండి",
+    "additionalInfo": "మరింత సమాచారం",
+    "additionalInfoPlaceholder": "మరింత సమాచారం నమోదు చేయండి (ఉదా: పరిమాణం, నాణ్యత, మొదలైనవి)",
+    "activityType": "సక్రియత రకం",
+    "activityTypePlaceholder": "సక్రియత రకం నమోదు చేయండి",
+    "activityTypeOptions": {
+      "sale": "అమ్మకము",
       "donation": "దానం"
     },
-    "price-offered": "అందించిన ధర (విక్రయానికి అయితే)",
-    "price-offered-placeholder": "అందించిన ధరను నమోదు చేయండి",
-    "select-ngo-foodbank": "ఎన్‌జీఓ/ఫుడ్‌బ్యాంక్‌ను ఎంచుకోండి",
-    "select-ngo-foodbank-placeholder": "ఎన్‌జీఓ/ఫుడ్‌బ్యాంక్‌ను ఎంచుకోండి",
-    "select-ngo-foodbank-options": {
-      "ngo": "ఎన్‌జీఓ",
+    "priceOffered": "అమ్మకానికి ధర",
+    "priceOfferedPlaceholder": "అమ్మకానికి ధర నమోదు చేయండి",
+    "selectNgoFoodbank": "NGO/ఫుడ్‌బ్యాంక్ ఎంచుకోండి",
+    "selectNgoFoodbankPlaceholder": "NGO/ఫుడ్‌బ్యాంక్ ఎంచుకోండి",
+    "selectNgoFoodbankOptions": {
+      "ngo": "NGO",
       "foodbank": "ఫుడ్‌బ్యాంక్"
     },
-    "submit": "విక్రయం/దానానికి పోస్ట్ చేయండి",
-    "pending-purchases": "పెండింగ్ కొనుగోళ్లు",
+    "submit": "అమ్మకానికి/దానానికి పోస్ట్ చేయండి",
+    "pendingPurchases": "ప్రతిష్టిత కొనుగోళ్లు",
     "price": "ధర",
     "organization": "సంస్థ",
-    "completed-purchases": "పూర్తయిన కొనుగోళ్లు",
+    "completedPurchases": "పూర్తి కొనుగోళ్లు",
     "crop": "పంట",
     "buyer": "కొనుగోలుదారు",
     "quantity": "పరిమాణం"
+  },
+  "emergencyAlerts": {
+    "raiseEmergency": "అపద్గతిని ఉత్పత్తి చేయండి",
+    "reason": "ఎందుకు (ఉదాహరణకు, అగ్నిప్రమాదం)",
+    "urgencyLevel": "తక్షణత స్థాయి",
+    "location": "స్థానం",
+    "contactInfo": "సంప్రదింపు సమాచారం",
+    "additionalDetails": "మరింత వివరాలు",
+    "submit": "అపద్గతిని సమర్పించండి",
+    "trackAlerts": "మీ అపద్గతులను ట్రాక్ చేయండి",
+    "respond": "ప్రత్యుత్తరం ఇవ్వండి",
+    "impactMetrics": "ప్రభావ లక్షణాలు",
+    "totalAlerts": "మొత్తం అపద్గతులు",
+    "avgResponseTime": "సగటు స్పందన సమయం",
+    "beneficiaries": "లబ్ధిదారులు",
+    "mealsDelivered": "చెల్లించిన భోజనాలు",
+    "alertStatus": "అపద్గత స్థితి",
+    "inProgress": "ప్రగతిలో ఉంది",
+    "resolved": "పరిష్కరించబడింది",
+    "submitResponse": "ప్రత్యుత్తరాన్ని సమర్పించండి",
+    "cancel": "రద్దు చేయండి"
   }
 }
+

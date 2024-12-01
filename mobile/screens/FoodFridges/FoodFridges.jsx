@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { Picker } from '@react-native-picker/picker'; // Used for drop-downs
 import MapView, { Marker } from 'react-native-maps';  // Import MapView and Marker from react-native-maps
+import { useTranslation } from "react-i18next";
+import { Language } from '../../components/language';
 
 // Sample data for fridges
 const fridgeLocations = [
@@ -12,6 +14,7 @@ const fridgeLocations = [
 ];
 
 const FoodFridges = () => {
+  const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState('');
   const [serveFor, setServeFor] = useState('');
   const [expireTime, setExpireTime] = useState('');
@@ -24,10 +27,12 @@ const FoodFridges = () => {
   ];
 
   return (
-    <ScrollView style={styles.container}>
+<ScrollView style={styles.container}>
+      <Language />
+      
       {/* Header Section */}
       <View style={styles.header}>
-        <Text style={styles.title}>Food Fridges</Text>
+        <Text style={styles.title}>{t('foodFridges.header')}</Text>
       </View>
 
       {/* Stats Cards */}
@@ -41,7 +46,7 @@ const FoodFridges = () => {
       </View>
 
       {/* Find a Fridge Section */}
-      <Text style={styles.sectionTitle}>Find a Fridge</Text>
+      <Text style={styles.sectionTitle}>{t('foodFridges.findFridgeSection.title')}</Text>
 
       {/* Map Section with react-native-maps */}
       <View style={styles.mapContainer}>
@@ -60,7 +65,7 @@ const FoodFridges = () => {
               key={fridge.id}
               coordinate={{ latitude: fridge.latitude, longitude: fridge.longitude }}
               title={fridge.name}
-              description={`Location of ${fridge.name}`}
+              description={t('foodFridges.map.fridgeDescription', { fridge: fridge.name })}
             />
           ))}
         </MapView>
@@ -70,53 +75,53 @@ const FoodFridges = () => {
       <View style={styles.searchContainer}>
         <TextInput
           style={styles.searchInput}
-          placeholder="Search fridges near you..."
+          placeholder={t('foodFridges.findFridgeSection.searchPlaceholder')}
           value={searchQuery}
           onChangeText={setSearchQuery}
         />
       </View>
 
       {/* Donate Food Section */}
-      <Text style={styles.sectionTitle}>Donate Food</Text>
+      <Text style={styles.sectionTitle}>{t('foodFridges.donateFoodSection.title')}</Text>
       <View style={styles.donateSection}>
         <TextInput
           style={styles.searchInput}
-          placeholder="Enter meal details (e.g., Pizza, Salad)"
+          placeholder={t('foodFridges.donateFoodSection.mealDetailsPlaceholder')}
         />
 
         {/* Serve For Picker */}
-        <Text style={styles.pickerLabel}>Serve For</Text>
+        <Text style={styles.pickerLabel}>{t('foodFridges.donateFoodSection.serveForLabel')}</Text>
         <Picker
           selectedValue={serveFor}
           style={styles.picker}
           onValueChange={(itemValue) => setServeFor(itemValue)}
         >
-          <Picker.Item label="Select..." value="" />
-          <Picker.Item label="1" value="1" />
-          <Picker.Item label="2" value="2" />
-          <Picker.Item label="3" value="3" />
+          <Picker.Item label={t('foodFridges.donateFoodSection.serveForOptions.select')} value="" />
+          <Picker.Item label={t('foodFridges.donateFoodSection.serveForOptions.1')} value="1" />
+          <Picker.Item label={t('foodFridges.donateFoodSection.serveForOptions.2')} value="2" />
+          <Picker.Item label={t('foodFridges.donateFoodSection.serveForOptions.3')} value="3" />
         </Picker>
 
         {/* Expire Time */}
-        <Text style={styles.pickerLabel}>Expire Time</Text>
+        <Text style={styles.pickerLabel}>{t('foodFridges.donateFoodSection.expireTimeLabel')}</Text>
         <View style={styles.expireTimeContainer}>
           <TouchableOpacity
             style={[styles.donateButton, expireTime === 'days' && { backgroundColor: '#3B82F6' }]}
             onPress={() => setExpireTime('days')}
           >
-            <Text style={styles.donateButtonText}>Days</Text>
+            <Text style={styles.donateButtonText}>{t('foodFridges.donateFoodSection.expireTimeOptions.days')}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.donateButton, expireTime === 'hrs' && { backgroundColor: '#3B82F6' }]}
             onPress={() => setExpireTime('hrs')}
           >
-            <Text style={styles.donateButtonText}>Hours</Text>
+            <Text style={styles.donateButtonText}>{t('foodFridges.donateFoodSection.expireTimeOptions.hours')}</Text>
           </TouchableOpacity>
         </View>
 
         {/* Donate Button */}
         <TouchableOpacity style={styles.donateButton}>
-          <Text style={styles.donateButtonText}>Donate Meal</Text>
+          <Text style={styles.donateButtonText}>{t('foodFridges.donateFoodSection.donateButton')}</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

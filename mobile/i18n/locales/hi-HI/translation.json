@@ -1,37 +1,92 @@
 {
   "language": "भाषा",
+
+  "foodFridges": {
+    "header": "फ़ूड फ्रिज़",
+    "stats": {
+      "totalFridges": "कुल फ्रिज़",
+      "mealsDonated": "दान किए गए भोजन",
+      "fridgesNearYou": "आपके पास फ्रिज़"
+    },
+    "findFridgeSection": {
+      "title": "फ्रिज़ ढूंढें",
+      "searchPlaceholder": "अपने पास फ्रिज़ खोजें..."
+    },
+    "donateFoodSection": {
+      "title": "भोजन दान करें",
+      "mealDetailsPlaceholder": "भोजन विवरण दर्ज करें (जैसे, पिज़्ज़ा, सलाद)",
+      "serveForLabel": "किसके लिए परोसें",
+      "serveForOptions": {
+        "select": "चुनें...",
+        "1": "1",
+        "2": "2",
+        "3": "3"
+      },
+      "expireTimeLabel": "समाप्ति समय",
+      "expireTimeOptions": {
+        "days": "दिन",
+        "hours": "घंटे"
+      },
+      "donateButton": "भोजन दान करें"
+    },
+    "map": {
+      "fridgeDescription": "इस फ्रिज का स्थान"
+    }
+  },
+
   "farmers": {
     "title": "किसान डैशबोर्ड",
     "welcome": "स्वागत है",
     "donated": "दान किए गए",
     "meals": "भोजन",
-    "tax": "कर कटौती योग्य",
-    "post": "फसल बिक्री के लिए प्रस्तुत करें",
-    "crop-type": "फसल का प्रकार",
-    "crop-type-placeholder": "फसल का प्रकार दर्ज करें",
-    "additional-info": "अतिरिक्त जानकारी",
-    "additional-info-placeholder": "अतिरिक्त जानकारी दर्ज करें (जैसे मात्रा, गुणवत्ता, आदि)",
-    "activity-type": "गतिविधि प्रकार",
-    "activity-type-placeholder": "गतिविधि प्रकार दर्ज करें",
-    "activity-type-options": {
-      "sale": "बिक्री",
+    "tax": "कर में कटौती",
+    "post": "बेचने के लिए फसल पोस्ट करें",
+    "cropType": "फसल प्रकार",
+    "cropTypePlaceholder": "फसल प्रकार दर्ज करें",
+    "additionalInfo": "अतिरिक्त जानकारी",
+    "additionalInfoPlaceholder": "अतिरिक्त जानकारी दर्ज करें (जैसे मात्रा, गुणवत्ता, आदि)",
+    "activityType": "सक्रियता प्रकार",
+    "activityTypePlaceholder": "सक्रियता प्रकार दर्ज करें",
+    "activityTypeOptions": {
+      "sale": "बेचाई",
       "donation": "दान"
     },
-    "price-offered": "प्रस्तावित मूल्य (यदि बिक्री)",
-    "price-offered-placeholder": "प्रस्तावित मूल्य दर्ज करें",
-    "select-ngo-foodbank": "एनजीओ/फूडबैंक चुनें",
-    "select-ngo-foodbank-placeholder": "एनजीओ/फूडबैंक चुनें",
-    "select-ngo-foodbank-options": {
-      "ngo": "एनजीओ",
-      "foodbank": "फूडबैंक"
+    "priceOffered": "मूल्य (यदि बिक्री है)",
+    "priceOfferedPlaceholder": "मूल्य दर्ज करें",
+    "selectNgoFoodbank": "NGO/फ़ूडबैंक चुनें",
+    "selectNgoFoodbankPlaceholder": "NGO/फ़ूडबैंक चुनें",
+    "selectNgoFoodbankOptions": {
+      "ngo": "NGO",
+      "foodbank": "फ़ूडबैंक"
     },
     "submit": "बिक्री/दान के लिए पोस्ट करें",
-    "pending-purchases": "लंबित खरीदारी",
+    "pendingPurchases": "लंबित खरीदारी",
     "price": "मूल्य",
     "organization": "संगठन",
-    "completed-purchases": "पूर्ण खरीदारी",
+    "completedPurchases": "पूरा हुआ खरीदारी",
     "crop": "फसल",
     "buyer": "खरीदार",
     "quantity": "मात्रा"
+  },
+  "emergencyAlerts": {
+    "raiseEmergency": "आपातकाल उठाएं",
+    "reason": "कारण (उदाहरण के लिए, आग)",
+    "urgencyLevel": "तत्कालता स्तर",
+    "location": "स्थान",
+    "contactInfo": "संपर्क जानकारी",
+    "additionalDetails": "अतिरिक्त विवरण",
+    "submit": "आपातकाल सबमिट करें",
+    "trackAlerts": "अपने अलर्ट ट्रैक करें",
+    "respond": "प्रतिक्रिया दें",
+    "impactMetrics": "प्रभाव मीट्रिक",
+    "totalAlerts": "कुल अलर्ट",
+    "avgResponseTime": "औसत प्रतिक्रिया समय",
+    "beneficiaries": "लाभार्थी",
+    "mealsDelivered": "खाने की आपूर्ति",
+    "alertStatus": "अलर्ट स्थिति",
+    "inProgress": "प्रगति में है",
+    "resolved": "सुलझा हुआ",
+    "submitResponse": "प्रतिक्रिया सबमिट करें",
+    "cancel": "रद्द करें"
   }
 }
