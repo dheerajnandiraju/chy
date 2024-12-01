@@ -129,15 +129,17 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
     backgroundColor: '#F3F4F6',  // Background color
+    marginTop:20,
   },
   header: {
+    
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 16,
   },
   title: {
-    fontSize: 20,
+    fontSize: 26,
     fontWeight: 'bold',
   },
   statsCard: {
@@ -190,6 +192,10 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     fontSize: 16,
+    borderColor:'#ccc',
+    borderWidth:1,
+    borderRadius:3,
+
   },
   donateSection: {
     marginTop: 24,
