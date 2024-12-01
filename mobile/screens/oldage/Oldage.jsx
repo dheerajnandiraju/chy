@@ -12,6 +12,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../context/AuthContext';
+import EmergencyAlerts from './EmergencyAlerts';
 
 const { width } = Dimensions.get('window');
 
@@ -214,7 +215,7 @@ const OldAgeHomesDashboard = () => {
       {currentPage === 'main' && renderMainDashboard()}
       {currentPage === 'mealRequests' && renderMealRequests()}
       {currentPage === 'trackVolunteer' && renderTrackVolunteer()}
-      {currentPage === 'emergencyAlerts' && renderEmergencyAlerts()}
+      {currentPage === 'emergencyAlerts' && <EmergencyAlerts/>}
 
       <View style={styles.tabBar}>
         <TouchableOpacity style={styles.tabItem} onPress={() => setCurrentPage('main')}>

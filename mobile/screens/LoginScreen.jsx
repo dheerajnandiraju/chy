@@ -66,6 +66,9 @@ const LoginScreen = () => {
           } else if (data.user.role === 'organizations') {
             navigation.navigate('Oldage');
           }
+          else if (data.user.role === 'farmers'){
+            navigation.navigate('FarmersDashboard')
+          }
         } else {
           setErrorMessage('Invalid response format');
         }

@@ -5,16 +5,20 @@ const User = require('../models/user');
 const Restaurant = require('../models/restaurant');
 const Organization = require('../models/organization');
 const Volunteer = require('../models/volunteer');
+const Admin = require('../models/Admin')
 const router = express.Router();
 
 // Signup Route
 router.post('/signup', async (req, res) => {
-  const { fullName, email, phoneNumber, password, address, userRole } = req.body;
+  let { fullName, email, phoneNumber, password, address, userRole } = req.body;
 
   try {
     // Check if user already exists
     const userExists = await User.findOne({ email });
     if (userExists) return res.status(400).json({ message: 'User already exists' });
+    if(!userRole){
+      userRole = "Admin"
+    }
 
     // Create new user
     const newUser = new User({
@@ -61,6 +65,13 @@ router.post('/signup', async (req, res) => {
       });
 
       await newVolunteer.save();
+    }else{
+      const newAdmin = new Admin({
+        adminId: newUser._id,
+        name: fullName,
+        email:email,
+        phoneNumber:phoneNumber,
+      })
     }
 
     // Create JWT token
