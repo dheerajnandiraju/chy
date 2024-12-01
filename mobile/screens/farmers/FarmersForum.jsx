@@ -6,18 +6,33 @@ import {
   StyleSheet,
   Image,
   TouchableOpacity,
-  Dimensions,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Layout from "./Layout";
 import { useNavigation } from "@react-navigation/native";
 
+// ForumItem Component
+const ForumItem = ({ forum }) => {
+  return (
+    <TouchableOpacity style={styles.forumItem}>
+      <Image
+        source={require("../../assets/119.png")}
+        style={styles.forumImage}
+      />
+      <Text style={styles.forumTitle}>{forum.title}</Text>
+    </TouchableOpacity>
+  );
+};
+
 const ForumsScreen = () => {
-  const forums = Array.from({ length: 6 }, (_, i) => ({
-    id: i + 1,
-    title: `Forum ${i + 1}`,
-    imageUrl: "/placeholder.svg",
-  }));
+  const forums = [
+    { id: 1, title: "Forum 1" },
+    { id: 2, title: "Forum 2" },
+    { id: 3, title: "Forum 3" },
+    { id: 4, title: "Forum 4" },
+    { id: 5, title: "Forum 5" },
+    { id: 6, title: "Forum 6" },
+  ];
 
   const navigation = useNavigation();
 
@@ -46,15 +61,13 @@ const ForumsScreen = () => {
           <View style={styles.forumsContainer}>
             <Text style={styles.sectionTitle}>Farmer Forums</Text>
             <View style={styles.forumsGrid}>
-              {forums.map((forum) => (
-                <TouchableOpacity key={forum.id} style={styles.forumItem}>
-                  <Image
-                    source={require("../../assets/119.png")}
-                    style={styles.forumImage}
-                  />
-                  <Text style={styles.forumTitle}>{forum.title}</Text>
-                </TouchableOpacity>
-              ))}
+              {/* Render ForumItems manually instead of using map */}
+              <ForumItem forum={forums[0]} />
+              <ForumItem forum={forums[1]} />
+              <ForumItem forum={forums[2]} />
+              <ForumItem forum={forums[3]} />
+              <ForumItem forum={forums[4]} />
+              <ForumItem forum={forums[5]} />
             </View>
           </View>
 

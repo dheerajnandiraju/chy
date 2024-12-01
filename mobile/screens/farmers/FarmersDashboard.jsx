@@ -12,8 +12,10 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import Layout from "./Layout";
+import Icon from "react-native-vector-icons/FontAwesome";
+
 import { Picker } from "@react-native-picker/picker";
+import Layout from "./Layout";
 
 const FarmersDashboard = () => {
   const navigation = useNavigation();
@@ -78,13 +80,17 @@ const FarmersDashboard = () => {
   };
 
   return (
-    <Layout navigation={navigation}>
       <SafeAreaView style={styles.container}>
         <ScrollView>
           {/* Header */}
           <View style={styles.header}>
+            <View style={{display:'flex', flexDirection:'row', alignItems:'center'}}>
             <Ionicons name="home-outline" size={24} color="black" />
             <Text style={styles.headerTitle}>Farmers Dashboard</Text>
+            </View>
+            <TouchableOpacity>
+            <Icon name="bell-o" size={25} color="#000" />
+            </TouchableOpacity>
           </View>
 
           <Text style={styles.welcome}>Welcome, John Smith!</Text>
@@ -268,7 +274,7 @@ const FarmersDashboard = () => {
           </Modal>
         )}
       </SafeAreaView>
-    </Layout>
+
   );
 };
 
@@ -283,6 +289,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderBottomWidth: 1,
     borderBottomColor: "#eee",
+    justifyContent:'space-between',
   },
   headerTitle: {
     fontSize: 18,

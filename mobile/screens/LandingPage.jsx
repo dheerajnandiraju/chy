@@ -8,6 +8,30 @@ const LandingPage = () => {
   return (
     <ScrollView style={styles.container}>
       {/* Image Background Section with Overlay Text */}
+
+      <View style={styles.buttonSection}>
+      <Image style={styles.logo} source={require('../assets/wText.png')} />
+        <Text style={styles.sectionTitle}>Be A Part of the Change</Text>
+        <View style={styles.buttonContainer}>
+          {/* Sign Up Button */}
+          <TouchableOpacity 
+            style={styles.button}
+            onPress={() => navigation.navigate('LoginScreen')}
+          >
+            <Text style={styles.buttonText}>Sign Up</Text>
+          </TouchableOpacity>
+
+          {/* Donate Now Button */}
+          <TouchableOpacity 
+            style={[styles.button, styles.donateButton]}
+            onPress={() => alert('Donate Now pressed')}
+          >
+            <Text style={styles.buttonText}>Donate Now</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
+
       <ImageBackground 
         source={require('../assets/0.png')}  // Placeholder for background image
         style={styles.imageBackground}
@@ -73,26 +97,7 @@ const LandingPage = () => {
       </View>
 
       {/* Call to Action Section */}
-      <View style={styles.buttonSection}>
-        <Text style={styles.sectionTitle}>Be A Part of the Change</Text>
-        <View style={styles.buttonContainer}>
-          {/* Sign Up Button */}
-          <TouchableOpacity 
-            style={styles.button}
-            onPress={() => navigation.navigate('LoginScreen')}
-          >
-            <Text style={styles.buttonText}>Sign Up</Text>
-          </TouchableOpacity>
 
-          {/* Donate Now Button */}
-          <TouchableOpacity 
-            style={[styles.button, styles.donateButton]}
-            onPress={() => alert('Donate Now pressed')}
-          >
-            <Text style={styles.buttonText}>Donate Now</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
 
       {/* Footer */}
       <Text style={styles.footerText}>© 2023 Motiff AI. All rights reserved.</Text>
@@ -215,6 +220,9 @@ const styles = StyleSheet.create({
     color: '#777',
   },
   buttonSection: {
+    justifyContent:'center',
+    alignItems:'center',
+    height:500,
     marginTop: 20,
     alignItems: 'center', // Center align the buttons
   },
@@ -288,6 +296,11 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#333',
   },
+  logo:{
+    height:200,
+    width:200,
+    margin:30,
+  }
 });
 
 export default LandingPage;
