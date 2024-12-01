@@ -27,7 +27,7 @@ const VolunteerDashboard = () => {
 
 const fetchMealRequests = async () => {
   try {
-    const response = await fetch('http://192.168.43.41:3000/api/orders');
+    const response = await fetch('http://10.11.49.240:3000/api/orders');
     const data = await response.json();
     console.log("Orders : ",data.orders)
     const data1 = data.orders.filter(each => each.status === "In Progress");

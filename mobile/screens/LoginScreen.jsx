@@ -39,7 +39,7 @@ const LoginScreen = () => {
       setLoading(true);
   
       // Make an API request to your backend for authentication
-      const response = await fetch('http://192.168.43.41:3000/api/auth/login', {
+      const response = await fetch('http://10.11.49.240:3000/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
