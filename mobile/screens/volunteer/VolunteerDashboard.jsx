@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import {
   View,
   Text,
@@ -10,11 +10,59 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { useAuth } from '../../context/AuthContext';
 
 const { width } = Dimensions.get('window');
 
 const VolunteerDashboard = () => {
   const [currentPage, setCurrentPage] = useState('main');
+  const [mealRequests, setMealRequests] = useState([]);
+
+  const {user} = useAuth();
+  console.log(user)
+
+  useEffect(() => {
+    fetchMealRequests();
+}, [currentPage]);
+
+const fetchMealRequests = async () => {
+  try {
+    const response = await fetch('http://192.168.43.41:3000/api/orders');
+    const data = await response.json();
+    console.log("Orders : ",data.orders)
+    const data1 = data.orders.filter(each => each.status === "In Progress");
+    console.log(data1)
+    setMealRequests(data1);
+  } catch (error) {
+    console.error('Error fetching meal requests:', error);
+  }
+};
+
+ const handleAccept = async (orderId) => {
+   try{
+    const response = await fetch(`http://192.168.43.41:3000/api/orders/${orderId}/volunteer`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name:user.fullName,
+        extra: user.address,
+        phoneNumber:user.contactNumber,
+      }),
+
+    });
+    console.log(response)
+
+    if (response.status === 200) {
+      alert('Order checked out successfully!');
+      setMealRequests(mealRequests.filter(order => order._id !== orderId));
+    }
+
+   }catch(error){
+     console.error('Error accepting meal request:', error);
+   }
+ }
 
   const renderMainDashboard = () => (
     <ScrollView>
@@ -90,19 +138,21 @@ const VolunteerDashboard = () => {
   const renderAvailableTasks = () => (
     <ScrollView>
       <Text style={styles.pageTitle}>Available Tasks</Text>
-      <View style={styles.taskItem}>
+      {mealRequests.map(each =>(
+        <View style={styles.taskItem} key={each._id}>
         <Image
           source={require('../../assets/67.png')}
           style={styles.taskImage}
         />
         <View style={styles.taskInfo}>
-          <Text style={styles.taskTitle}>Pickup: Joe's Diner</Text>
-          <Text style={styles.taskSubtitle}>Delivery: Food Bank</Text>
+          <Text style={styles.taskTitle}>Pickup: {each.restaurant.name}</Text>
+          <Text style={styles.taskSubtitle}>Delivery: {each.organization.name}</Text>
         </View>
-        <TouchableOpacity style={styles.acceptButton}>
-          <Text style={styles.acceptButtonText}>Accept</Text>
+        <TouchableOpacity style={styles.acceptButton} >
+          <Text style={styles.acceptButtonText} onPress={()=> handleAccept(each._id)}>Accept</Text>
         </TouchableOpacity>
       </View>
+      ))}
       {/* Add more task items here */}
     </ScrollView>
   );

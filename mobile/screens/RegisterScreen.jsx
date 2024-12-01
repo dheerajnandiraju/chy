@@ -34,7 +34,7 @@ const RegisterScreen = () => {
       try {
         setLoading(true);
 
-        const response = await fetch('http://192.168.43.41:3030/api/auth/signup', {
+        const response = await fetch('http://192.168.43.41:3000/api/auth/signup', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

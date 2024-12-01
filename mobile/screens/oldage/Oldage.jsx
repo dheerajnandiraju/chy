@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -11,13 +11,62 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { useAuth } from '../../context/AuthContext';
+import EmergencyAlerts from './EmergencyAlerts';
 
 const { width } = Dimensions.get('window');
+
 
 const OldAgeHomesDashboard = () => {
   const [currentPage, setCurrentPage] = useState('main');
   const [priorityLevel, setPriorityLevel] = useState('High');
   const [feedback, setFeedback] = useState('');
+  const [mealRequests, setMealRequests] = useState([]);
+  const {user} = useAuth();
+  console.log(user)
+
+  useEffect(() => {
+      fetchMealRequests();
+  }, [currentPage]);
+
+  const fetchMealRequests = async () => {
+    try {
+      const response = await fetch('http://192.168.43.41:3000/api/orders');
+      const data = await response.json();
+      console.log("Orders : ",data)
+      const data1 = data.orders.filter(each => each.status === "Pending");
+      console.log(data1)
+      setMealRequests(data1);
+
+    } catch (error) {
+      console.error('Error fetching meal requests:', error);
+    }
+  };
+
+  const handleCheckout = async (orderId) => {
+    try {
+      const response = await fetch(`http://192.168.43.41:3000/api/orders/${orderId}/organization`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name:user.fullName,
+          location: user.address,
+          phoneNumber:user.contactNumber,
+        }),
+      });
+      console.log(response)
+
+      if (response.status === 200) {
+        alert('Order checked out successfully!');
+        setMealRequests(mealRequests.filter(order => order._id !== orderId));
+      }
+    } catch (error) {
+      console.error('Error checking out meal:', error);
+      alert('Failed to check out the meal request. Please try again.');
+    }
+  };
 
   const renderMainDashboard = () => (
     <ScrollView>
@@ -26,7 +75,6 @@ const OldAgeHomesDashboard = () => {
         <Text style={styles.headerTitle}>Old Age Homes...</Text>
       </View>
 
-      {/* Stats Section */}
       <View style={styles.statsContainer}>
         <View style={styles.statBox}>
           <Text style={styles.statValue}>120</Text>
@@ -42,7 +90,6 @@ const OldAgeHomesDashboard = () => {
         </View>
       </View>
 
-      {/* Quick Access Buttons */}
       <View style={styles.quickAccessContainer}>
         <TouchableOpacity style={styles.quickAccessItem} onPress={() => setCurrentPage('mealRequests')}>
           <Ionicons name="restaurant-outline" size={24} color="#000" />
@@ -67,7 +114,6 @@ const OldAgeHomesDashboard = () => {
         </TouchableOpacity>
       </View>
 
-      {/* Reports Section */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Reports</Text>
         <View style={styles.reportsContainer}>
@@ -84,7 +130,6 @@ const OldAgeHomesDashboard = () => {
         </View>
       </View>
 
-      {/* Feedback Section */}
       <View style={styles.feedbackSection}>
         <Text style={styles.sectionTitle}>Feedback</Text>
         <TextInput
@@ -105,13 +150,25 @@ const OldAgeHomesDashboard = () => {
   const renderMealRequests = () => (
     <ScrollView>
       <Text style={styles.pageTitle}>Meal Requests</Text>
-      <View style={styles.mealRequestItem}>
-        <Image source={require('../../assets/100.png')} style={styles.restaurantLogo} />
-        <View style={styles.mealRequestInfo}>
-          <Text style={styles.restaurantName}>Joe's Diner</Text>
-          <Text style={styles.mealDetails}>10 meals, expiring in 2 hours</Text>
-        </View>
-      </View>
+      {mealRequests.length > 0 ? (
+        mealRequests.map((order) => (
+          <View key={order._id} style={styles.mealRequestItem}>
+            <Image source={require('../../assets/100.png')} style={styles.restaurantLogo} />
+            <View style={styles.mealRequestInfo}>
+              <Text style={styles.restaurantName}>{order.restaurant.name}</Text>
+              <Text style={styles.mealDetails}>{order.mealType}, {order.servings} servings, expiring in {order.expirationDays} days, {order.expirationHours} hours</Text>
+              <TouchableOpacity
+                style={styles.checkoutButton}
+                onPress={() => handleCheckout(order._id)}
+              >
+                <Text style={styles.checkoutButtonText}>Check Out</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        ))
+      ) : (
+        <Text>No meal requests available at the moment.</Text>
+      )}
     </ScrollView>
   );
 
@@ -158,7 +215,7 @@ const OldAgeHomesDashboard = () => {
       {currentPage === 'main' && renderMainDashboard()}
       {currentPage === 'mealRequests' && renderMealRequests()}
       {currentPage === 'trackVolunteer' && renderTrackVolunteer()}
-      {currentPage === 'emergencyAlerts' && renderEmergencyAlerts()}
+      {currentPage === 'emergencyAlerts' && <EmergencyAlerts/>}
 
       <View style={styles.tabBar}>
         <TouchableOpacity style={styles.tabItem} onPress={() => setCurrentPage('main')}>
@@ -203,11 +260,13 @@ const styles = StyleSheet.create({
   submitFeedbackButton: { backgroundColor: '#007AFF', padding: 16, borderRadius: 8, alignItems: 'center', marginTop: 16 },
   submitFeedbackButtonText: { color: '#FFF', fontSize: 18, fontWeight: 'bold' },
   pageTitle: { fontSize: 24, fontWeight: 'bold', marginBottom: 24 },
-  mealRequestItem: { flexDirection: 'row', alignItems: 'center' },
+  mealRequestItem: { flexDirection: 'row', alignItems: 'center', marginBottom: 16 },
   restaurantLogo: { width: 50, height: 50, borderRadius: 25 },
-  mealRequestInfo: { marginLeft: 16 },
+  mealRequestInfo: { marginLeft: 16, flex: 1 },
   restaurantName: { fontSize: 16, fontWeight: 'bold' },
   mealDetails: { fontSize: 14, color: '#666' },
+  checkoutButton: { marginTop: 8, backgroundColor: '#007AFF', paddingVertical: 8, paddingHorizontal: 16, borderRadius: 4 },
+  checkoutButtonText: { color: '#FFF', fontWeight: 'bold' },
   mapImage: { width: '100%', height: 200, borderRadius: 8, marginBottom: 16 },
   volunteerInfo: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 16 },
   volunteerName: { fontSize: 16, fontWeight: 'bold' },

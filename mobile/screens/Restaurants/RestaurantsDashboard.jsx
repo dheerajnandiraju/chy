@@ -183,16 +183,21 @@ const RestaurantsDashboard = () => {
   const handlePostMeal = async () => {
     try {
       const orderData = {
-        restaurantId: user.id,  // Pass the restaurant's user ID here
-        mealType: items,  // e.g. "Pasta, Salad"
-        servings: serveFor,  // Number of people
-        expirationDays: expireTime.days,  // Days
-        expirationHours: expireTime.hours,  // Hours
-        restaurantLocation: user?.address,
-        contactNumber:user?.contactNumber,  // Assuming user address is the restaurant's location
+        restaurant:{
+          name: RestaurantName,
+          location: user?.address,
+          phoneNumber: user?.contactNumber,
+        },  // Pass the restaurant's user ID here
+        meal: items,  // e.g. "Pasta, Salad"
+        servings: serveFor, 
+        expiration:{
+          days: expireTime.days,
+          hours: expireTime.hours,
+        },
+  // Assuming user address is the restaurant's location
       };
   
-      const response = await fetch('http://192.168.43.41:3030/api/orders', {
+      const response = await fetch('http://192.168.43.41:3000/api/orders', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
