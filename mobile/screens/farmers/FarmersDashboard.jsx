@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -16,6 +16,8 @@ import Icon from "react-native-vector-icons/FontAwesome";
 
 import { Picker } from "@react-native-picker/picker";
 import Layout from "./Layout";
+import { Language } from "../../components/language";
+import { useTranslation } from "react-i18next";
 
 const FarmersDashboard = () => {
   const navigation = useNavigation();
@@ -79,6 +81,8 @@ const FarmersDashboard = () => {
     closeModal();
   };
 
+  const { t } = useTranslation();
+
   return (
       <SafeAreaView style={styles.container}>
         <ScrollView>
@@ -86,73 +90,71 @@ const FarmersDashboard = () => {
           <View style={styles.header}>
             <View style={{display:'flex', flexDirection:'row', alignItems:'center'}}>
             <Ionicons name="home-outline" size={24} color="black" />
-            <Text style={styles.headerTitle}>Farmers Dashboard</Text>
+            <Text style={styles.headerTitle}>{t("farmers.title")}</Text>
             </View>
             <TouchableOpacity>
             <Icon name="bell-o" size={25} color="#000" />
             </TouchableOpacity>
           </View>
-
-          <Text style={styles.welcome}>Welcome, John Smith!</Text>
-
+          <Text style={styles.welcome}>{t("farmers.welcome")}, John Smith!</Text>
           {/* Farmer Stats */}
           <View style={styles.statsContainer}>
             <View style={styles.statBox}>
               <Text style={styles.statValue}>500 kg</Text>
-              <Text style={styles.statLabel}>Donated</Text>
+              <Text style={styles.statLabel}>{t("farmers.donated")}</Text>
             </View>
             <View style={styles.statBox}>
-              <Text style={styles.statValue}>5,000 meals</Text>
-              <Text style={styles.statLabel}>Meals</Text>
+              <Text style={styles.statValue}>5,000 {t("farmers.meals")}</Text>
+              <Text style={styles.statLabel}>{t("farmers.meals")}</Text>
             </View>
             <View style={styles.statBox}>
               <Text style={styles.statValue}>$200</Text>
-              <Text style={styles.statLabel}>Tax</Text>
+              <Text style={styles.statLabel}>{t("farmers.tax")}</Text>
             </View>
           </View>
 
           {/* Post Produce Form */}
           <View style={styles.formContainer}>
-            <Text style={styles.sectionTitle}>Post Produce</Text>
-            <Text style={styles.label}>Produce Type</Text>
+            <Text style={styles.sectionTitle}>{t("farmers.post")}</Text>
+            <Text style={styles.label}>{t("farmers.crop-type")}</Text>
             <TextInput
               style={styles.input}
               value={produceType}
               onChangeText={setProduceType}
-              placeholder="Enter Produce Type"
+              placeholder={t("farmers.crop-type-placeholder")}
             />
 
-            <Text style={styles.label}>Additional Notes</Text>
+            <Text style={styles.label}>{t("farmers.additional-info")}</Text>
             <TextInput
               style={styles.input}
               value={additionalNotes}
               onChangeText={setAdditionalNotes}
-              placeholder="Additional notes (e.g., handle with care)"
+              placeholder={t("farmers.additional-info-placeholder")}
               multiline
             />
 
-            <Text style={styles.label}>Activity Type</Text>
+            <Text style={styles.label}>{t("farmers.activity-type")}</Text>
             <Picker
               selectedValue={activityType}
               style={styles.picker}
               onValueChange={(itemValue) => setActivityType(itemValue)}
             >
-              <Picker.Item label="Sale" value="sale" />
-              <Picker.Item label="Donation" value="donation" />
+              <Picker.Item label={t("farmers.activity-type-options.sale")} value="sale" />
+              <Picker.Item label={t("farmers.activity-type-options.donation")} value="donation" />
             </Picker>
 
-            <Text style={styles.label}>Price Offer (If Sale)</Text>
+            <Text style={styles.label}>{t("farmers.price-offered")}</Text>
             {activityType === "sale" && (
               <TextInput
                 style={styles.input}
                 value={priceOffer}
                 onChangeText={setPriceOffer}
-                placeholder="Enter price"
+                placeholder={t("farmers.price-offered-placeholder")}
                 keyboardType="numeric"
               />
             )}
 
-            <Text style={styles.label}>Select NGO/FoodBank</Text>
+            <Text style={styles.label}>{t("farmers.select-ngo-foodbank")}</Text>
             <Picker
               selectedValue={selectedOrganization}
               style={styles.picker}
@@ -164,7 +166,7 @@ const FarmersDashboard = () => {
             </Picker>
 
             <TouchableOpacity style={styles.button} onPress={handlePostProduce}>
-              <Text style={styles.buttonText}>Post for Sale/Donation</Text>
+              <Text style={styles.buttonText}>{t("farmers.submit")}</Text>
             </TouchableOpacity>
           </View>
 
@@ -174,15 +176,17 @@ const FarmersDashboard = () => {
               <Ionicons name="checkmark-circle" size={24} color="green" />
               <Text style={styles.successText}>
                 {activityType === "sale"
-                  ? "Produce posted for sale successfully! NGOs and volunteers will be notified."
-                  : "Produce donated successfully! NGOs and food banks will be notified."}
+                  ? (t("farmers.success"))
+                  : (t("farmers.donated-success"))}
               </Text>
             </View>
           )}
 
           {/* Pending Purchases */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Pending Purchases</Text>
+            <Text style={styles.sectionTitle}>
+              {t("farmers.pending-purchases")}
+            </Text>
             {pendingPurchases.map((purchase) => (
               <TouchableOpacity
                 key={purchase.id}
@@ -190,21 +194,35 @@ const FarmersDashboard = () => {
                 onPress={() => openModalForPendingPurchase(purchase)}
               >
                 <Text style={styles.purchaseText}>{purchase.produceType}</Text>
-                <Text style={styles.purchaseText}>Price: {purchase.price}</Text>
-                <Text style={styles.purchaseText}>Organization: {purchase.organization}</Text>
+                <Text style={styles.purchaseText}>
+                  {t("farmers.price")}:
+                  {purchase.price}</Text>
+                <Text style={styles.purchaseText}>
+                  {t("farmers.organization")}:
+                  {purchase.organization}</Text>
               </TouchableOpacity>
             ))}
           </View>
 
           {/* Completed Purchases */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Completed Purchases</Text>
+            <Text style={styles.sectionTitle}>
+              {t("farmers.completed-purchases")}
+            </Text>
             {completedPurchases.map((purchase) => (
               <View key={purchase.id} style={styles.purchaseItem}>
-                <Text style={styles.purchaseText}>Produce: {purchase.produceType}</Text>
-                <Text style={styles.purchaseText}>Buyer: {purchase.buyer}</Text>
-                <Text style={styles.purchaseText}>Price: {purchase.price}</Text>
-                <Text style={styles.purchaseText}>Quantity: {purchase.quantity}</Text>
+                <Text style={styles.purchaseText}>
+                  {t("farmers.crop-type")}:
+                  {purchase.produceType}</Text>
+                <Text style={styles.purchaseText}>
+                  {t("farmers.buyer")}:
+                  {purchase.buyer}</Text>
+                <Text style={styles.purchaseText}>
+                  {t("farmers.price")}:
+                  {purchase.price}</Text>
+                <Text style={styles.purchaseText}>
+                  {t("farmers.quantity")}:
+                  {purchase.quantity}</Text>
               </View>
             ))}
           </View>
@@ -240,7 +258,9 @@ const FarmersDashboard = () => {
                   }
                 />
 
-                <Text style={styles.modalLabel}>Additional Notes</Text>
+                <Text style={styles.modalLabel}>
+                  {t("farmers.additional-notes")}
+                </Text>
                 <TextInput
                   style={styles.modalInput}
                   value={selectedPurchase.notes}
@@ -249,7 +269,9 @@ const FarmersDashboard = () => {
                   }
                 />
 
-                <Text style={styles.modalLabel}>Select Organization</Text>
+                <Text style={styles.modalLabel}>
+                  {t("farmers.select-organization")}
+                </Text>
                 <Picker
                   selectedValue={selectedPurchase.organization}
                   style={styles.picker}
@@ -263,11 +285,15 @@ const FarmersDashboard = () => {
                 </Picker>
 
                 <TouchableOpacity style={styles.button} onPress={updatePendingPurchase}>
-                  <Text style={styles.buttonText}>Update Purchase</Text>
+                  <Text style={styles.buttonText}>
+                    {t("farmers.update-purchase")}
+                  </Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.button} onPress={closeModal}>
-                  <Text style={styles.buttonText}>Close</Text>
+                  <Text style={styles.buttonText}>
+                    {t("farmers.close")}
+                  </Text>
                 </TouchableOpacity>
               </View>
             </View>

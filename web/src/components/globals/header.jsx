@@ -10,17 +10,6 @@ export const Header = (
             {props.title}
           </h1>
           <div className="flex items-center gap-5">
-            <input
-              type="text"
-              className="border border-gray-300 rounded-md px-3 py-2 mr-2"
-              placeholder="Search..."
-            />
-            <button>
-              <CiBellOn size={30} className="text-gray-800" />
-            </button>
-            <button className="">
-              <CiUser size={30} className="text-gray-800" />
-            </button>
           </div>
         </div>
       </div>

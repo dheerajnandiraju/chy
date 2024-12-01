@@ -2,14 +2,14 @@ import React, { useEffect } from "react";
 import { StyleSheet, View, ScrollView, TouchableOpacity, Text } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTranslation } from "react-i18next";
-import Brasil from "./flags/Brasil";
-import Spain from "./flags/Spain";
-import India from "./flags/India";
+import SvgComponent from "./flags/English";
+import TeluguLetter from "./flags/Telugu";
+import HindiLetter from "./flags/Hindi";
 
 const flags = [
-  { component: Brasil, lang: "pt-BR", name: "Brasil" },
-  { component: Spain, lang: "es-ES", name: "Spain" },
-  { component: India, lang: "hi-IN", name: "India" },
+  { component: SvgComponent, lang: "en-EN", name: "English" },
+  { component: TeluguLetter, lang: "te-TE", name: "Telugu" },
+  { component: HindiLetter, lang: "hi-HI", name: "Hindi" },
 ];
 
 export function Language() {

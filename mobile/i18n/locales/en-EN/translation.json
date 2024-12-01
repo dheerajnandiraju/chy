@@ -1,0 +1,37 @@
+{
+  "language": "Idioma",
+  "farmers": {
+    "title": "Farmers Dashboard",
+    "welcome": "Welcome",
+    "donated": "Donated",
+    "meals": "meals",
+    "tax": "Tax Deductible",
+    "post": "submit a crop for sale",
+    "crop-type": "Crop Type",
+    "crop-type-placeholder": "Enter crop type",
+    "additional-info": "Additional Information",
+    "additional-info-placeholder": "Enter additional information (e.g. quantity, quality, etc.)",
+    "activity-type": "Activity Type",
+    "activity-type-placeholder": "Enter activity type",
+    "activity-type-options": {
+      "sale": "Sale",
+      "donation": "Donation"
+    },
+    "price-offered": "Price Offered (If sale)",
+    "price-offered-placeholder": "Enter price offered",
+    "select-ngo-foodbank": "Select NGO/Foodbank",
+    "select-ngo-foodbank-placeholder": "Select NGO/Foodbank",
+    "select-ngo-foodbank-options": {
+      "ngo": "NGO",
+      "foodbank": "Foodbank"
+    },
+    "submit": "Post for Sale/Donation",
+    "pending-purchases": "Pending Purchases",
+    "price": "Price",
+    "organization": "Organization",
+    "completed-purchases": "Completed Purchases",
+    "crop": "Crop",
+    "buyer": "Buyer",
+    "quantity": "Quantity"
+  }
+}

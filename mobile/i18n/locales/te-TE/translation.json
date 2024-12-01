@@ -1,0 +1,37 @@
+{
+  "language": "భాష",
+  "farmers": {
+    "title": "రైతుల డ్యాష్‌బోర్డ్",
+    "welcome": "స్వాగతం",
+    "donated": "దానం చేసిన",
+    "meals": "భోజనాలు",
+    "tax": "పన్ను తగ్గించదగిన",
+    "post": "విక్రయానికి పంటను సమర్పించండి",
+    "crop-type": "పంట రకం",
+    "crop-type-placeholder": "పంట రకం నమోదు చేయండి",
+    "additional-info": "అదనపు సమాచారం",
+    "additional-info-placeholder": "అదనపు సమాచారం నమోదు చేయండి (ఉదా: పరిమాణం, నాణ్యత, మొదలైనవి)",
+    "activity-type": "కార్యకలాపం రకం",
+    "activity-type-placeholder": "కార్యకలాపం రకం నమోదు చేయండి",
+    "activity-type-options": {
+      "sale": "విక్రయం",
+      "donation": "దానం"
+    },
+    "price-offered": "అందించిన ధర (విక్రయానికి అయితే)",
+    "price-offered-placeholder": "అందించిన ధరను నమోదు చేయండి",
+    "select-ngo-foodbank": "ఎన్‌జీఓ/ఫుడ్‌బ్యాంక్‌ను ఎంచుకోండి",
+    "select-ngo-foodbank-placeholder": "ఎన్‌జీఓ/ఫుడ్‌బ్యాంక్‌ను ఎంచుకోండి",
+    "select-ngo-foodbank-options": {
+      "ngo": "ఎన్‌జీఓ",
+      "foodbank": "ఫుడ్‌బ్యాంక్"
+    },
+    "submit": "విక్రయం/దానానికి పోస్ట్ చేయండి",
+    "pending-purchases": "పెండింగ్ కొనుగోళ్లు",
+    "price": "ధర",
+    "organization": "సంస్థ",
+    "completed-purchases": "పూర్తయిన కొనుగోళ్లు",
+    "crop": "పంట",
+    "buyer": "కొనుగోలుదారు",
+    "quantity": "పరిమాణం"
+  }
+}

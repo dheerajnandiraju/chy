@@ -10,6 +10,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { Picker } from '@react-native-picker/picker';
 import { useNavigation } from '@react-navigation/native';
+import { Language } from '../components/language';
 
 const RegisterScreen = () => {
   const [fullName, setFullName] = useState('');
@@ -140,7 +141,7 @@ const RegisterScreen = () => {
           <Picker.Item label="Farmers" value="farmers" />
         </Picker>
       </View>
-
+      <Language />
       <TouchableOpacity
         style={styles.signupButton}
         onPress={handleSignUp}

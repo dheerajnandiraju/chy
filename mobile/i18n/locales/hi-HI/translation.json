@@ -1,0 +1,37 @@
+{
+  "language": "भाषा",
+  "farmers": {
+    "title": "किसान डैशबोर्ड",
+    "welcome": "स्वागत है",
+    "donated": "दान किए गए",
+    "meals": "भोजन",
+    "tax": "कर कटौती योग्य",
+    "post": "फसल बिक्री के लिए प्रस्तुत करें",
+    "crop-type": "फसल का प्रकार",
+    "crop-type-placeholder": "फसल का प्रकार दर्ज करें",
+    "additional-info": "अतिरिक्त जानकारी",
+    "additional-info-placeholder": "अतिरिक्त जानकारी दर्ज करें (जैसे मात्रा, गुणवत्ता, आदि)",
+    "activity-type": "गतिविधि प्रकार",
+    "activity-type-placeholder": "गतिविधि प्रकार दर्ज करें",
+    "activity-type-options": {
+      "sale": "बिक्री",
+      "donation": "दान"
+    },
+    "price-offered": "प्रस्तावित मूल्य (यदि बिक्री)",
+    "price-offered-placeholder": "प्रस्तावित मूल्य दर्ज करें",
+    "select-ngo-foodbank": "एनजीओ/फूडबैंक चुनें",
+    "select-ngo-foodbank-placeholder": "एनजीओ/फूडबैंक चुनें",
+    "select-ngo-foodbank-options": {
+      "ngo": "एनजीओ",
+      "foodbank": "फूडबैंक"
+    },
+    "submit": "बिक्री/दान के लिए पोस्ट करें",
+    "pending-purchases": "लंबित खरीदारी",
+    "price": "मूल्य",
+    "organization": "संगठन",
+    "completed-purchases": "पूर्ण खरीदारी",
+    "crop": "फसल",
+    "buyer": "खरीदार",
+    "quantity": "मात्रा"
+  }
+}
