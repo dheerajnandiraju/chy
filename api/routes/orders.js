@@ -3,7 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const nodemailer = require('nodemailer');
 const Order = require('../models/Order');
-const Organization = require('../models/Organization');  // Assuming you have this model
+const Organization = require('../models/organization');  // Assuming you have this model
 const router = express.Router();
 
 // Create Nodemailer transporter using Gmail
