@@ -20,9 +20,8 @@ import HomePage from './screens/Restaurants/HomePage';
 import { AuthProvider } from './context/AuthContext';
 import PurchaseDetails from './screens/farmers/PurchaseDetails';
 import OldAgeHomesDashboard from './screens/oldage/Oldage';
-import TemporaryMap from './screens/Maps';
 import Quality from './screens/oldage/Quality';
-
+import './i18n';
 
 const Stack = createStackNavigator();
 
@@ -50,7 +49,6 @@ export default function App() {
         <Stack.Screen name="FarmersDashboard" component={FarmersDashboard}/>
         <Stack.Screen name="PurchaseDetails" component={PurchaseDetails} />
         <Stack.Screen name="Oldage" component={OldAgeHomesDashboard} />
-        <Stack.Screen name="TemporaryMap" component={TemporaryMap} />
         <Stack.Screen name="Quality" component={Quality} /> 
       </Stack.Navigator>
     </NavigationContainer>
