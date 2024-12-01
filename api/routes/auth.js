@@ -35,6 +35,7 @@ router.post('/signup', async (req, res) => {
         userId: newUser._id,
         name: fullName,
         email:email,
+        phoneNumber:phoneNumber,
         location:address,
         numberOfDeliveries: 0,
         numberOfMembersFed: 0,

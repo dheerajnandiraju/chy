@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import {useAuth} from '../context/AuthContext'
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
@@ -20,51 +21,65 @@ const LoginScreen = () => {
   const [loading, setLoading] = useState(false);
 
   const navigation = useNavigation();
+  const {login} = useAuth();
 
   const handleLogin = async () => {
     if (!email || !password) {
       setErrorMessage('Please fill in all fields.');
       return;
     }
-
+  
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       setErrorMessage('Please enter a valid email address.');
       return;
     }
-
+  
     try {
       setLoading(true);
-
+  
       // Make an API request to your backend for authentication
       const response = await fetch('http://192.168.43.41:3000/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
+        body: JSON.stringify({ email, password }),
       });
-
+  
       const data = await response.json();
-      setLoading(false);
-      console.log(data)
-
+  
+      // Log the response for debugging
+      console.log('Server Response:', data);
+  
       if (response.status === 200) {
-        // Successful login
-        Alert.alert('Success', 'Login Successful');
-        navigation.navigate('HomePage'); // Navigate to Trips screen
+        // Check if data contains the token and user object
+        if (data.token && data.user) {
+          login(data.token, data.user);  // Using the login context to store token and user
+          setLoading(false);
+  
+          // Navigate based on user role
+          if (data.user.role === 'restaurants') {
+            navigation.navigate('HomePage');
+          } else if (data.user.role === 'volunteer') {
+            navigation.navigate('VolunteerDashboard');
+          } else if (data.user.role === 'organizations') {
+            navigation.navigate('Oldage');
+          }
+        } else {
+          setErrorMessage('Invalid response format');
+        }
       } else {
-        // Display error from the server
+        // Handle non-200 response
         setErrorMessage(data.message || 'Invalid email or password');
       }
     } catch (error) {
       setLoading(false);
-      setErrorMessage('No response from the server');
+      console.error('Error during login:', error);
+      setErrorMessage('No response from the server or a network error');
     }
   };
+  
 
   const togglePasswordVisibility = () => {
     setShowPassword(prev => !prev);
