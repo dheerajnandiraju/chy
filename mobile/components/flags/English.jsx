@@ -1,23 +1,20 @@
-import Svg, { Rect } from "react-native-svg";
+import React from 'react';
+import { Text, View, StyleSheet } from 'react-native';
 
 function SvgComponent(props) {
   return (
-    <Svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 100 100"
-      width={100}
-      height={100}
-      {...props}
-    >
-      {/* Background */}
-      <Rect width="100" height="100" fill="#f0f0f0" />
-
-      {/* "E" Letter */}
-      <Rect x="20" y="20" width="60" height="15" fill="#000" />
-      <Rect x="20" y="42.5" width="40" height="15" fill="#000" />
-      <Rect x="20" y="65" width="60" height="15" fill="#000" />
-    </Svg>
+    <View style={styles.container} {...props}>
+      <Text style={styles.text}>EN</Text>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  text: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#000',
+  },
+});
 
 export default SvgComponent;

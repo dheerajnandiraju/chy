@@ -84,223 +84,233 @@ const FarmersDashboard = () => {
   const { t } = useTranslation();
 
   return (
-      <SafeAreaView style={styles.container}>
-        <ScrollView>
-          {/* Header */}
-          <View style={styles.header}>
-            <View style={{display:'flex', flexDirection:'row', alignItems:'center'}}>
+    <SafeAreaView style={styles.container}>
+      <ScrollView>
+        {/* Header */}
+        <View style={styles.header}>
+          <View style={styles.headerLeft}>
             <Ionicons name="home-outline" size={24} color="black" />
             <Text style={styles.headerTitle}>{t("farmers.title")}</Text>
-            </View>
+          </View>
+          <View style={styles.headerRight}>
+            <Language />
             <TouchableOpacity>
-            <Icon name="bell-o" size={25} color="#000" />
+              <Icon name="bell-o" size={25} color="#000" />
             </TouchableOpacity>
           </View>
-          <Text style={styles.welcome}>{t("farmers.welcome")}, John Smith!</Text>
-          {/* Farmer Stats */}
-          <View style={styles.statsContainer}>
-            <View style={styles.statBox}>
-              <Text style={styles.statValue}>500 kg</Text>
-              <Text style={styles.statLabel}>{t("farmers.donated")}</Text>
-            </View>
-            <View style={styles.statBox}>
-              <Text style={styles.statValue}>5,000 {t("farmers.meals")}</Text>
-              <Text style={styles.statLabel}>{t("farmers.meals")}</Text>
-            </View>
-            <View style={styles.statBox}>
-              <Text style={styles.statValue}>$200</Text>
-              <Text style={styles.statLabel}>{t("farmers.tax")}</Text>
-            </View>
-          </View>
+        </View>
 
-          {/* Post Produce Form */}
-          <View style={styles.formContainer}>
-            <Text style={styles.sectionTitle}>{t("farmers.post")}</Text>
-            <Text style={styles.label}>{t("farmers.crop-type")}</Text>
+        <Text style={styles.welcome}>{t("farmers.welcome")}, John Smith!</Text>
+
+        {/* Farmer Stats */}
+        <View style={styles.statsContainer}>
+          <View style={styles.statBox}>
+            <Text style={styles.statValue}>500 kg</Text>
+            <Text style={styles.statLabel}>{t("farmers.donated")}</Text>
+          </View>
+          <View style={styles.statBox}>
+            <Text style={styles.statValue}>5,000 {t("farmers.meals")}</Text>
+            <Text style={styles.statLabel}>{t("farmers.meals")}</Text>
+          </View>
+          <View style={styles.statBox}>
+            <Text style={styles.statValue}>$200</Text>
+            <Text style={styles.statLabel}>{t("farmers.tax")}</Text>
+          </View>
+        </View>
+
+        {/* Post Produce Form */}
+        <View style={styles.formContainer}>
+          <Text style={styles.sectionTitle}>{t("farmers.post")}</Text>
+          <Text style={styles.label}>{t("farmers.crop-type")}</Text>
+          <TextInput
+            style={styles.input}
+            value={produceType}
+            onChangeText={setProduceType}
+            placeholder={t("farmers.crop-type-placeholder")}
+          />
+
+          <Text style={styles.label}>{t("farmers.additional-info")}</Text>
+          <TextInput
+            style={styles.input}
+            value={additionalNotes}
+            onChangeText={setAdditionalNotes}
+            placeholder={t("farmers.additional-info-placeholder")}
+            multiline
+          />
+
+          <Text style={styles.label}>{t("farmers.activity-type")}</Text>
+          <Picker
+            selectedValue={activityType}
+            style={styles.picker}
+            onValueChange={(itemValue) => setActivityType(itemValue)}
+          >
+            <Picker.Item label={t("farmers.activity-type-options.sale")} value="sale" />
+            <Picker.Item label={t("farmers.activity-type-options.donation")} value="donation" />
+          </Picker>
+
+          <Text style={styles.label}>{t("farmers.price-offered")}</Text>
+          {activityType === "sale" && (
             <TextInput
               style={styles.input}
-              value={produceType}
-              onChangeText={setProduceType}
-              placeholder={t("farmers.crop-type-placeholder")}
+              value={priceOffer}
+              onChangeText={setPriceOffer}
+              placeholder={t("farmers.price-offered-placeholder")}
+              keyboardType="numeric"
             />
-
-            <Text style={styles.label}>{t("farmers.additional-info")}</Text>
-            <TextInput
-              style={styles.input}
-              value={additionalNotes}
-              onChangeText={setAdditionalNotes}
-              placeholder={t("farmers.additional-info-placeholder")}
-              multiline
-            />
-
-            <Text style={styles.label}>{t("farmers.activity-type")}</Text>
-            <Picker
-              selectedValue={activityType}
-              style={styles.picker}
-              onValueChange={(itemValue) => setActivityType(itemValue)}
-            >
-              <Picker.Item label={t("farmers.activity-type-options.sale")} value="sale" />
-              <Picker.Item label={t("farmers.activity-type-options.donation")} value="donation" />
-            </Picker>
-
-            <Text style={styles.label}>{t("farmers.price-offered")}</Text>
-            {activityType === "sale" && (
-              <TextInput
-                style={styles.input}
-                value={priceOffer}
-                onChangeText={setPriceOffer}
-                placeholder={t("farmers.price-offered-placeholder")}
-                keyboardType="numeric"
-              />
-            )}
-
-            <Text style={styles.label}>{t("farmers.select-ngo-foodbank")}</Text>
-            <Picker
-              selectedValue={selectedOrganization}
-              style={styles.picker}
-              onValueChange={setSelectedOrganization}
-            >
-              {organizations.map((org) => (
-                <Picker.Item key={org.value} label={org.label} value={org.value} />
-              ))}
-            </Picker>
-
-            <TouchableOpacity style={styles.button} onPress={handlePostProduce}>
-              <Text style={styles.buttonText}>{t("farmers.submit")}</Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* Success Message */}
-          {showSuccess && (
-            <View style={styles.successMessage}>
-              <Ionicons name="checkmark-circle" size={24} color="green" />
-              <Text style={styles.successText}>
-                {activityType === "sale"
-                  ? (t("farmers.success"))
-                  : (t("farmers.donated-success"))}
-              </Text>
-            </View>
           )}
 
-          {/* Pending Purchases */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>
-              {t("farmers.pending-purchases")}
-            </Text>
-            {pendingPurchases.map((purchase) => (
-              <TouchableOpacity
-                key={purchase.id}
-                style={styles.purchaseItem}
-                onPress={() => openModalForPendingPurchase(purchase)}
-              >
-                <Text style={styles.purchaseText}>{purchase.produceType}</Text>
-                <Text style={styles.purchaseText}>
-                  {t("farmers.price")}:
-                  {purchase.price}</Text>
-                <Text style={styles.purchaseText}>
-                  {t("farmers.organization")}:
-                  {purchase.organization}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-
-          {/* Completed Purchases */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>
-              {t("farmers.completed-purchases")}
-            </Text>
-            {completedPurchases.map((purchase) => (
-              <View key={purchase.id} style={styles.purchaseItem}>
-                <Text style={styles.purchaseText}>
-                  {t("farmers.crop-type")}:
-                  {purchase.produceType}</Text>
-                <Text style={styles.purchaseText}>
-                  {t("farmers.buyer")}:
-                  {purchase.buyer}</Text>
-                <Text style={styles.purchaseText}>
-                  {t("farmers.price")}:
-                  {purchase.price}</Text>
-                <Text style={styles.purchaseText}>
-                  {t("farmers.quantity")}:
-                  {purchase.quantity}</Text>
-              </View>
-            ))}
-          </View>
-        </ScrollView>
-
-        {/* Modal for updating pending purchase details */}
-        {isModalVisible && selectedPurchase && (
-          <Modal
-            transparent={true}
-            animationType="slide"
-            visible={isModalVisible}
-            onRequestClose={closeModal}
+          <Text style={styles.label}>{t("farmers.select-ngo-foodbank")}</Text>
+          <Picker
+            selectedValue={selectedOrganization}
+            style={styles.picker}
+            onValueChange={setSelectedOrganization}
           >
-            <View style={styles.modalBackground}>
-              <View style={styles.modalContainer}>
-                <Text style={styles.modalTitle}>Update Pending Purchase</Text>
+            {organizations.map((org) => (
+              <Picker.Item key={org.value} label={org.label} value={org.value} />
+            ))}
+          </Picker>
 
-                <Text style={styles.modalLabel}>Produce Type</Text>
-                <TextInput
-                  style={styles.modalInput}
-                  value={selectedPurchase.produceType}
-                  onChangeText={(text) =>
-                    setSelectedPurchase({ ...selectedPurchase, produceType: text })
-                  }
-                />
+          <TouchableOpacity style={styles.button} onPress={handlePostProduce}>
+            <Text style={styles.buttonText}>{t("farmers.submit")}</Text>
+          </TouchableOpacity>
+        </View>
 
-                <Text style={styles.modalLabel}>Price</Text>
-                <TextInput
-                  style={styles.modalInput}
-                  value={selectedPurchase.price}
-                  onChangeText={(text) =>
-                    setSelectedPurchase({ ...selectedPurchase, price: text })
-                  }
-                />
-
-                <Text style={styles.modalLabel}>
-                  {t("farmers.additional-notes")}
-                </Text>
-                <TextInput
-                  style={styles.modalInput}
-                  value={selectedPurchase.notes}
-                  onChangeText={(text) =>
-                    setSelectedPurchase({ ...selectedPurchase, notes: text })
-                  }
-                />
-
-                <Text style={styles.modalLabel}>
-                  {t("farmers.select-organization")}
-                </Text>
-                <Picker
-                  selectedValue={selectedPurchase.organization}
-                  style={styles.picker}
-                  onValueChange={(itemValue) =>
-                    setSelectedPurchase({ ...selectedPurchase, organization: itemValue })
-                  }
-                >
-                  {organizations.map((org) => (
-                    <Picker.Item key={org.value} label={org.label} value={org.value} />
-                  ))}
-                </Picker>
-
-                <TouchableOpacity style={styles.button} onPress={updatePendingPurchase}>
-                  <Text style={styles.buttonText}>
-                    {t("farmers.update-purchase")}
-                  </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity style={styles.button} onPress={closeModal}>
-                  <Text style={styles.buttonText}>
-                    {t("farmers.close")}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </Modal>
+        {/* Success Message */}
+        {showSuccess && (
+          <View style={styles.successMessage}>
+            <Ionicons name="checkmark-circle" size={24} color="green" />
+            <Text style={styles.successText}>
+              {activityType === "sale"
+                ? t("farmers.success")
+                : t("farmers.donated-success")}
+            </Text>
+          </View>
         )}
-      </SafeAreaView>
 
+        {/* Pending Purchases */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>
+            {t("farmers.pending-purchases")}
+          </Text>
+          {pendingPurchases.map((purchase) => (
+            <TouchableOpacity
+              key={purchase.id}
+              style={styles.purchaseItem}
+              onPress={() => openModalForPendingPurchase(purchase)}
+            >
+              <Text style={styles.purchaseText}>{purchase.produceType}</Text>
+              <Text style={styles.purchaseText}>
+                {t("farmers.price")}:
+                {purchase.price}
+              </Text>
+              <Text style={styles.purchaseText}>
+                {t("farmers.organization")}:
+                {purchase.organization}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        {/* Completed Purchases */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>
+            {t("farmers.completed-purchases")}
+          </Text>
+          {completedPurchases.map((purchase) => (
+            <View key={purchase.id} style={styles.purchaseItem}>
+              <Text style={styles.purchaseText}>
+                {t("farmers.crop-type")}:
+                {purchase.produceType}
+              </Text>
+              <Text style={styles.purchaseText}>
+                {t("farmers.buyer")}:
+                {purchase.buyer}
+              </Text>
+              <Text style={styles.purchaseText}>
+                {t("farmers.price")}:
+                {purchase.price}
+              </Text>
+              <Text style={styles.purchaseText}>
+                {t("farmers.quantity")}:
+                {purchase.quantity}
+              </Text>
+            </View>
+          ))}
+        </View>
+      </ScrollView>
+
+      {/* Modal for updating pending purchase details */}
+      {isModalVisible && selectedPurchase && (
+        <Modal
+          transparent={true}
+          animationType="slide"
+          visible={isModalVisible}
+          onRequestClose={closeModal}
+        >
+          <View style={styles.modalBackground}>
+            <View style={styles.modalContainer}>
+              <Text style={styles.modalTitle}>Update Pending Purchase</Text>
+
+              <Text style={styles.modalLabel}>Produce Type</Text>
+              <TextInput
+                style={styles.modalInput}
+                value={selectedPurchase.produceType}
+                onChangeText={(text) =>
+                  setSelectedPurchase({ ...selectedPurchase, produceType: text })
+                }
+              />
+
+              <Text style={styles.modalLabel}>Price</Text>
+              <TextInput
+                style={styles.modalInput}
+                value={selectedPurchase.price}
+                onChangeText={(text) =>
+                  setSelectedPurchase({ ...selectedPurchase, price: text })
+                }
+              />
+
+              <Text style={styles.modalLabel}>
+                {t("farmers.additional-notes")}
+              </Text>
+              <TextInput
+                style={styles.modalInput}
+                value={selectedPurchase.notes}
+                onChangeText={(text) =>
+                  setSelectedPurchase({ ...selectedPurchase, notes: text })
+                }
+              />
+
+              <Text style={styles.modalLabel}>
+                {t("farmers.select-organization")}
+              </Text>
+              <Picker
+                selectedValue={selectedPurchase.organization}
+                style={styles.picker}
+                onValueChange={(itemValue) =>
+                  setSelectedPurchase({ ...selectedPurchase, organization: itemValue })
+                }
+              >
+                {organizations.map((org) => (
+                  <Picker.Item key={org.value} label={org.label} value={org.value} />
+                ))}
+              </Picker>
+
+              <TouchableOpacity style={styles.button} onPress={updatePendingPurchase}>
+                <Text style={styles.buttonText}>
+                  {t("farmers.update-purchase")}
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.button} onPress={closeModal}>
+                <Text style={styles.buttonText}>
+                  {t("farmers.close")}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+      )}
+    </SafeAreaView>
   );
 };
 
@@ -312,10 +322,20 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-between",
     padding: 16,
     borderBottomWidth: 1,
     borderBottomColor: "#eee",
-    justifyContent:'space-between',
+  },
+  headerLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  headerRight: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 16,
+    width: 100,
   },
   headerTitle: {
     fontSize: 18,

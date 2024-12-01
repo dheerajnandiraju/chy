@@ -1,18 +1,20 @@
-import Svg, { Path } from "react-native-svg";
+import React from 'react';
+import { Text, View, StyleSheet } from 'react-native';
 
 function HindiLetter(props) {
   return (
-    <Svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" {...props}>
-      <Path
-        d="M50 150 C 80 50, 120 50, 150 150 L 130 150 C 110 80, 90 80, 70 150 Z"
-        fill="orange"
-      />
-      <Path
-        d="M70 50 L 130 50 L 130 70 L 70 70 Z"
-        fill="black"
-      />
-    </Svg>
+    <View style={styles.container} {...props}>
+      <Text style={styles.text}>HI</Text>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  text: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#000',
+  },
+});
 
 export default HindiLetter;

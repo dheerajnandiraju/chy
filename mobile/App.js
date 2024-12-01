@@ -29,7 +29,7 @@ export default function App() {
     <AuthProvider>
     <NavigationContainer>
 
-      <Stack.Navigator initialRouteName="FoodFridges" screenOptions={{headerShown: false}}>
+      <Stack.Navigator initialRouteName="FarmersDashboard" screenOptions={{headerShown: false}}>
         <Stack.Screen name="LandingPage" component={LandingPage} />
         <Stack.Screen name="LoginScreen" component={LoginScreen}/>
         <Stack.Screen name="RegisterScreen" component={RegisterScreen}/>
