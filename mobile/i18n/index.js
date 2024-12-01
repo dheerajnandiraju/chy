@@ -2,15 +2,14 @@ import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import * as Localization from "expo-localization";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import translationPt from "./locales/pt-BR/translation.json";
-import translationEs from "./locales/es-ES/translation.json";
-import translationHi from "./locales/hi-IN/translation.json";
+import translationTe from "./locales/te-TE/translation.json";
+import translationEn from "./locales/en-EN/translation.json";
+import translationHi from "./locales/hi-HI/translation.json";
 
-// Configuração das traduções
 const resources = {
-  "pt-BR": { translation: translationPt },
-  "es-ES": { translation: translationEs },
-  "hi-IN": { translation: translationHi },
+  "te-TE": { translation: translationTe },
+  "en-EN": { translation: translationEn },
+  "hi-HI": { translation: translationHi },
 };
 
 const initI18n = async () => {
@@ -24,15 +23,11 @@ const initI18n = async () => {
     compatibilityJSON: "v4",
     resources,
     lng: savedLanguage,
-    fallbackLng: "pt-BR",
+    fallbackLng: "en-EN",
     interpolation: {
       escapeValue: false,
     },
   });
-
-  // Configura a direção do texto (LTR ou RTL)
-  // I18nManager.allowRTL(false);
-  // I18nManager.forceRTL(Localization.isRTL);
 };
 
 initI18n();

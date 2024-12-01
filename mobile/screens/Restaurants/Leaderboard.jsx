@@ -88,6 +88,9 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 2,
   },
+  yourRestaurantBackground: {
+    backgroundColor: "#f0f0f0", // Gray background for "Your Restaurant"
+  },
 });
 
 
@@ -195,6 +198,7 @@ const Leaderboard = () => {
       meals: 160,
       score: 40,
     },
+  
   ];
 
   return (
@@ -210,23 +214,28 @@ const Leaderboard = () => {
         </View>
 
         <View style={styles.card}>
-          <Text style={styles.title}>Leaderboard</Text>
-          {leaderboardData.map((restaurant) => (
-            <View key={restaurant.id}>
-              <View style={styles.separator} />
-              <View style={styles.restaurantItem}>
-                <Text style={styles.rank}>{restaurant.rank}</Text>
-                <Image source={restaurant.image} style={styles.image} />
-                
-                <View style={styles.restaurantInfo}>
-                  <Text style={styles.restaurantName}>{restaurant.name}</Text>
-                  <Text style={styles.meals}>{restaurant.meals} meals</Text>
-                </View>
-                <Text style={styles.mealsCount}>{restaurant.meals}</Text>
-              </View>
+      <Text style={styles.title}>Leaderboard</Text>
+      {leaderboardData.map((restaurant) => (
+        <View key={restaurant.id}>
+          <View style={styles.separator} />
+          <View
+            style={[
+              styles.restaurantItem,
+              restaurant.name === "Your Restaurant" && styles.yourRestaurantBackground,
+            ]}
+          >
+            <Text style={styles.rank}>{restaurant.rank}</Text>
+            <Image source={restaurant.image} style={styles.image} />
+            
+            <View style={styles.restaurantInfo}>
+              <Text style={styles.restaurantName}>{restaurant.name}</Text>
+              <Text style={styles.meals}>{restaurant.meals} meals</Text>
             </View>
-          ))}
+            <Text style={styles.mealsCount}>{restaurant.meals}</Text>
+          </View>
         </View>
+      ))}
+    </View>
       </ScrollView>
     </Layout>
   );

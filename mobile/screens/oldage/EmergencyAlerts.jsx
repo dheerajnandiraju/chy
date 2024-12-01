@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Modal } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
+import { useTranslation } from 'react-i18next';
+import { Language } from '../../components/language';
 
 // Sample Data for Alerts and Impact Metrics
 const emergencyAlerts = [
@@ -46,159 +48,160 @@ const EmergencyAlerts = () => {
     // Handle submitting the emergency form (e.g., send data to a server)
     console.log('Emergency Raised:', emergencyData);
   };
-
+  const { t } = useTranslation();
   return (
     <ScrollView style={styles.container}>
-      {/* 1. Raise an Emergency Section */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Raise an Emergency</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Urgency Level (e.g., High)"
-          value={emergencyData.urgency}
-          onChangeText={(text) => setEmergencyData({ ...emergencyData, urgency: text })}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Reason for Alert (e.g., Fire)"
-          value={emergencyData.reason}
-          onChangeText={(text) => setEmergencyData({ ...emergencyData, reason: text })}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Location"
-          value={emergencyData.location}
-          onChangeText={(text) => setEmergencyData({ ...emergencyData, location: text })}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Contact Information"
-          value={emergencyData.contactInfo}
-          onChangeText={(text) => setEmergencyData({ ...emergencyData, contactInfo: text })}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Additional Details"
-          value={emergencyData.additionalDetails}
-          onChangeText={(text) => setEmergencyData({ ...emergencyData, additionalDetails: text })}
-          multiline
-        />
-        <TouchableOpacity style={styles.submitButton} onPress={handleRaiseEmergency}>
-          <Text style={styles.submitButtonText}>Raise Emergency</Text>
-        </TouchableOpacity>
-      </View>
+      <Language/>
+    {/* 1. Raise an Emergency Section */}
+    <View style={styles.section}>
+      <Text style={styles.sectionTitle}>{t('emergencyAlerts.raiseEmergency')}</Text>
+      <TextInput
+        style={styles.input}
+        placeholder={t('emergencyAlerts.urgencyLevel')}
+        value={emergencyData.urgency}
+        onChangeText={(text) => setEmergencyData({ ...emergencyData, urgency: text })}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder={t('emergencyAlerts.reason')}
+        value={emergencyData.reason}
+        onChangeText={(text) => setEmergencyData({ ...emergencyData, reason: text })}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder={t('emergencyAlerts.location')}
+        value={emergencyData.location}
+        onChangeText={(text) => setEmergencyData({ ...emergencyData, location: text })}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder={t('emergencyAlerts.contactInfo')}
+        value={emergencyData.contactInfo}
+        onChangeText={(text) => setEmergencyData({ ...emergencyData, contactInfo: text })}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder={t('emergencyAlerts.additionalDetails')}
+        value={emergencyData.additionalDetails}
+        onChangeText={(text) => setEmergencyData({ ...emergencyData, additionalDetails: text })}
+        multiline
+      />
+      <TouchableOpacity style={styles.submitButton} onPress={handleRaiseEmergency}>
+        <Text style={styles.submitButtonText}>{t('emergencyAlerts.submit')}</Text>
+      </TouchableOpacity>
+    </View>
 
-      {/* 2. Track Your Alerts Section */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Track Your Alerts</Text>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          {emergencyAlerts.map((alert) => (
-            <View key={alert.id} style={styles.card}>
-              <Text style={styles.cardText}>Reason: {alert.reason}</Text>
-              <Text style={styles.cardText}>Urgency: {alert.urgency}</Text>
-              <Text style={styles.cardText}>Status: {alert.status}</Text>
-              <TouchableOpacity
-                style={styles.responseButton}
-                onPress={() => handleRespondToAlert(alert)} // Show modal on response click
-              >
-                <Text style={styles.responseButtonText}>Respond</Text>
-              </TouchableOpacity>
-            </View>
-          ))}
-        </ScrollView>
-
-        <View style={styles.mapContainer}>
-          <MapView
-            style={styles.map}
-            initialRegion={{
-              latitude: 37.78825,
-              longitude: -122.4324,
-              latitudeDelta: 0.0922,
-              longitudeDelta: 0.0421,
-            }}
-          >
-            {emergencyAlerts.map((alert, index) => (
-              <Marker
-                key={index}
-                coordinate={alert.location}
-                title={alert.reason}
-                description={`Urgency: ${alert.urgency}`}
-              />
-            ))}
-          </MapView>
-        </View>
-      </View>
-
-      {/* 3. Impact Metrics Section */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Impact Metrics</Text>
-        <View style={styles.metricCard}>
-          <Text style={styles.metricText}>Total Alerts: {impactMetrics.totalAlerts}</Text>
-          <Text style={styles.metricText}>Avg Response Time: {impactMetrics.avgResponseTime}</Text>
-          <Text style={styles.metricText}>Beneficiaries Reached: {impactMetrics.beneficiaries}</Text>
-          <Text style={styles.metricText}>Meals Delivered: {impactMetrics.mealsDelivered}</Text>
-        </View>
-      </View>
-
-      {/* 4. Respond to Alert Modal */}
-      <Modal
-        visible={showModal}
-        animationType="slide"
-        transparent={true}
-        onRequestClose={() => setShowModal(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContainer}>
-            {selectedAlert && (
-              <>
-                <Text style={styles.modalTitle}>Respond to Alert</Text>
-                <Text style={styles.modalText}>Reason: {selectedAlert.reason}</Text>
-                <Text style={styles.modalText}>Urgency: {selectedAlert.urgency}</Text>
-                <Text style={styles.modalText}>Status: {selectedAlert.status}</Text>
-
-                <TextInput
-                  style={styles.input}
-                  placeholder="Your Response"
-                  value={responseText}
-                  onChangeText={setResponseText}
-                  multiline
-                />
-
-                <Text style={styles.modalText}>Alert Status:</Text>
-                <View style={styles.pickerContainer}>
-                  <TouchableOpacity
-                    style={styles.statusButton}
-                    onPress={() => setAlertStatus('In Progress')}
-                  >
-                    <Text style={styles.statusButtonText}>In Progress</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.statusButton}
-                    onPress={() => setAlertStatus('Resolved')}
-                  >
-                    <Text style={styles.statusButtonText}>Resolved</Text>
-                  </TouchableOpacity>
-                </View>
-
-                <TouchableOpacity
-                  style={styles.submitButton}
-                  onPress={handleSubmitResponse}
-                >
-                  <Text style={styles.submitButtonText}>Submit Response</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={styles.cancelButton}
-                  onPress={() => setShowModal(false)} // Close the modal
-                >
-                  <Text style={styles.cancelButtonText}>Cancel</Text>
-                </TouchableOpacity>
-              </>
-            )}
+    {/* 2. Track Your Alerts Section */}
+    <View style={styles.section}>
+      <Text style={styles.sectionTitle}>{t('emergencyAlerts.trackAlerts')}</Text>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        {emergencyAlerts.map((alert) => (
+          <View key={alert.id} style={styles.card}>
+            <Text style={styles.cardText}>{`${t('emergencyAlerts.reason')}: ${alert.reason}`}</Text>
+            <Text style={styles.cardText}>{`${t('emergencyAlerts.urgencyLevel')}: ${alert.urgency}`}</Text>
+            <Text style={styles.cardText}>{`${t('emergencyAlerts.alertStatus')}: ${alert.status}`}</Text>
+            <TouchableOpacity
+              style={styles.responseButton}
+              onPress={() => handleRespondToAlert(alert)} // Show modal on response click
+            >
+              <Text style={styles.responseButtonText}>{t('emergencyAlerts.respond')}</Text>
+            </TouchableOpacity>
           </View>
+        ))}
+      </ScrollView>
+
+      <View style={styles.mapContainer}>
+        <MapView
+          style={styles.map}
+          initialRegion={{
+            latitude: 37.78825,
+            longitude: -122.4324,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
+        >
+          {emergencyAlerts.map((alert, index) => (
+            <Marker
+              key={index}
+              coordinate={alert.location}
+              title={alert.reason}
+              description={`${t('emergencyAlerts.urgencyLevel')}: ${alert.urgency}`}
+            />
+          ))}
+        </MapView>
+      </View>
+    </View>
+
+    {/* 3. Impact Metrics Section */}
+    <View style={styles.section}>
+      <Text style={styles.sectionTitle}>{t('emergencyAlerts.impactMetrics')}</Text>
+      <View style={styles.metricCard}>
+        <Text style={styles.metricText}>{`${t('emergencyAlerts.totalAlerts')}: ${impactMetrics.totalAlerts}`}</Text>
+        <Text style={styles.metricText}>{`${t('emergencyAlerts.avgResponseTime')}: ${impactMetrics.avgResponseTime}`}</Text>
+        <Text style={styles.metricText}>{`${t('emergencyAlerts.beneficiaries')}: ${impactMetrics.beneficiaries}`}</Text>
+        <Text style={styles.metricText}>{`${t('emergencyAlerts.mealsDelivered')}: ${impactMetrics.mealsDelivered}`}</Text>
+      </View>
+    </View>
+
+    {/* 4. Respond to Alert Modal */}
+    <Modal
+      visible={showModal}
+      animationType="slide"
+      transparent={true}
+      onRequestClose={() => setShowModal(false)}
+    >
+      <View style={styles.modalOverlay}>
+        <View style={styles.modalContainer}>
+          {selectedAlert && (
+            <>
+              <Text style={styles.modalTitle}>{t('emergencyAlerts.respond')}</Text>
+              <Text style={styles.modalText}>{`${t('emergencyAlerts.reason')}: ${selectedAlert.reason}`}</Text>
+              <Text style={styles.modalText}>{`${t('emergencyAlerts.urgencyLevel')}: ${selectedAlert.urgency}`}</Text>
+              <Text style={styles.modalText}>{`${t('emergencyAlerts.alertStatus')}: ${selectedAlert.status}`}</Text>
+
+              <TextInput
+                style={styles.input}
+                placeholder={t('emergencyAlerts.submitResponse')}
+                value={responseText}
+                onChangeText={setResponseText}
+                multiline
+              />
+
+              <Text style={styles.modalText}>{t('emergencyAlerts.alertStatus')}:</Text>
+              <View style={styles.pickerContainer}>
+                <TouchableOpacity
+                  style={styles.statusButton}
+                  onPress={() => setAlertStatus('In Progress')}
+                >
+                  <Text style={styles.statusButtonText}>{t('emergencyAlerts.inProgress')}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.statusButton}
+                  onPress={() => setAlertStatus('Resolved')}
+                >
+                  <Text style={styles.statusButtonText}>{t('emergencyAlerts.resolved')}</Text>
+                </TouchableOpacity>
+              </View>
+
+              <TouchableOpacity
+                style={styles.submitButton}
+                onPress={handleSubmitResponse}
+              >
+                <Text style={styles.submitButtonText}>{t('emergencyAlerts.submitResponse')}</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.cancelButton}
+                onPress={() => setShowModal(false)} // Close the modal
+              >
+                <Text style={styles.cancelButtonText}>{t('emergencyAlerts.cancel')}</Text>
+              </TouchableOpacity>
+            </>
+          )}
         </View>
-      </Modal>
-    </ScrollView>
+      </View>
+    </Modal>
+  </ScrollView>
   );
 };
 

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Home, BarChart2, Users, FileText, Settings, HelpCircle, LogOut } from "lucide-react";
+import { Home, BarChart2, Users, FileText, Settings, HelpCircle, LogOut, Hotel, Waypoints, Share, AlarmCheck } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -16,10 +16,10 @@ const SidebarComponent = () => {
     { name: "Volunteers", icon: <BarChart2 className="h-5 w-5" />, path: "/volunteers" },
     { name: "NGOs", icon: <Users className="h-5 w-5" />, path: "/ngos" },
     { name: "Farmers", icon: <FileText className="h-5 w-5" />, path: "/farmers" },
-    { name: "Restaurants", icon: <Settings className="h-5 w-5" />, path: "/restaurants" },
-    { name: "Food Tracking", icon: <Settings className="h-5 w-5" />, path: "/food-tracking" },
-    { name: "Feedback", icon: <Settings className="h-5 w-5" />, path: "/feedback" },
-    { name: "Emergency Alerts", icon: <Settings className="h-5 w-5" />, path: "/emergency-alerts" },
+    { name: "Restaurants", icon: <Hotel className="h-5 w-5" />, path: "/restaurants" },
+    { name: "Food Tracking", icon: <Waypoints className="h-5 w-5" />, path: "/food-tracking" },
+    { name: "Feedback", icon: <Share className="h-5 w-5" />, path: "/feedback" },
+    { name: "Emergency Alerts", icon: <AlarmCheck className="h-5 w-5" />, path: "/emergency-alerts" },
   ];
 
   // Effect to check localStorage for login state on page load
