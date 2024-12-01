@@ -13,6 +13,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../context/AuthContext';
 import EmergencyAlerts from './EmergencyAlerts';
+import Quality from './Quality';
 
 const { width } = Dimensions.get('window');
 
@@ -31,7 +32,7 @@ const OldAgeHomesDashboard = () => {
 
   const fetchMealRequests = async () => {
     try {
-      const response = await fetch('http://192.168.43.41:3000/api/orders');
+      const response = await fetch('http://10.11.49.240:3000/api/orders');
       const data = await response.json();
       console.log("Orders : ",data)
       const data1 = data.orders.filter(each => each.status === "Pending");
@@ -45,7 +46,7 @@ const OldAgeHomesDashboard = () => {
 
   const handleCheckout = async (orderId) => {
     try {
-      const response = await fetch(`http://192.168.43.41:3000/api/orders/${orderId}/organization`, {
+      const response = await fetch(`http://10.11.49.240:3000/api/orders/${orderId}/organization`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -214,7 +215,7 @@ const OldAgeHomesDashboard = () => {
     <SafeAreaView style={styles.container}>
       {currentPage === 'main' && renderMainDashboard()}
       {currentPage === 'mealRequests' && renderMealRequests()}
-      {currentPage === 'trackVolunteer' && renderTrackVolunteer()}
+      {currentPage === 'trackVolunteer' && <Quality/>}
       {currentPage === 'emergencyAlerts' && <EmergencyAlerts/>}
 
       <View style={styles.tabBar}>
@@ -225,7 +226,7 @@ const OldAgeHomesDashboard = () => {
           <Ionicons name="restaurant-outline" size={24} color={currentPage === 'mealRequests' ? "#007AFF" : "#000"} />
         </TouchableOpacity>
         <TouchableOpacity style={styles.tabItem} onPress={() => setCurrentPage('trackVolunteer')}>
-          <Ionicons name="location-outline" size={24} color={currentPage === 'trackVolunteer' ? "#007AFF" : "#000"} />
+          <Ionicons name="checkmark-circle-outline" size={24} color={currentPage === 'trackVolunteer' ? "#007AFF" : "#000"} />
         </TouchableOpacity>
         <TouchableOpacity style={styles.tabItem} onPress={() => setCurrentPage('emergencyAlerts')}>
           <Ionicons name="alert-circle-outline" size={24} color={currentPage === 'emergencyAlerts' ? "#007AFF" : "#000"} />
@@ -259,14 +260,36 @@ const styles = StyleSheet.create({
   textArea: { height: 100, textAlignVertical: 'top' },
   submitFeedbackButton: { backgroundColor: '#007AFF', padding: 16, borderRadius: 8, alignItems: 'center', marginTop: 16 },
   submitFeedbackButtonText: { color: '#FFF', fontSize: 18, fontWeight: 'bold' },
-  pageTitle: { fontSize: 24, fontWeight: 'bold', marginBottom: 24 },
-  mealRequestItem: { flexDirection: 'row', alignItems: 'center', marginBottom: 16 },
+  pageTitle: { fontSize: 24, 
+    fontWeight: 'bold', 
+    marginBottom: 24, 
+    textAlign: 'center', },
+  mealRequestItem: { flexDirection: 'row', 
+    alignItems: 'center', 
+    marginBottom: 16, 
+    justifyContent: 'center', // Centers the content of the row
+    paddingHorizontal: 16},
   restaurantLogo: { width: 50, height: 50, borderRadius: 25 },
-  mealRequestInfo: { marginLeft: 16, flex: 1 },
-  restaurantName: { fontSize: 16, fontWeight: 'bold' },
-  mealDetails: { fontSize: 14, color: '#666' },
-  checkoutButton: { marginTop: 8, backgroundColor: '#007AFF', paddingVertical: 8, paddingHorizontal: 16, borderRadius: 4 },
-  checkoutButtonText: { color: '#FFF', fontWeight: 'bold' },
+  mealRequestInfo: { marginLeft: 18, 
+    flex: 1, 
+    justifyContent: 'center', // Centers the text vertically
+    textAlign: 'left', },
+  restaurantName: { fontSize: 16, 
+    fontWeight: 'bold', 
+    marginBottom: 4, },
+  mealDetails: { fontSize: 14, 
+    color: '#666', 
+    textAlign: 'left', },
+  checkoutButton: {    marginTop: 16, // Adds some space above the button
+    backgroundColor: '#007AFF', 
+    paddingVertical: 12, // Adds more vertical padding for better button height
+    paddingHorizontal: 24, // Increases the button's horizontal padding
+    borderRadius: 8, 
+    alignSelf: 'center', // Centers the button horizontally
+    marginBottom: 24,},
+  checkoutButtonText: { color: '#FFF', 
+    fontWeight: 'bold', 
+    textAlign: 'center', },
   mapImage: { width: '100%', height: 200, borderRadius: 8, marginBottom: 16 },
   volunteerInfo: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 16 },
   volunteerName: { fontSize: 16, fontWeight: 'bold' },

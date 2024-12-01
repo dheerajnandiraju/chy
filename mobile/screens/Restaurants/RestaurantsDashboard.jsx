@@ -197,7 +197,7 @@ const RestaurantsDashboard = () => {
   // Assuming user address is the restaurant's location
       };
   
-      const response = await fetch('http://192.168.43.41:3000/api/orders', {
+      const response = await fetch('http:/10.11.49.240:3000/api/orders', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
