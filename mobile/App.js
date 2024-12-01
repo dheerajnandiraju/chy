@@ -12,7 +12,7 @@ import VolunteerDashboard from './screens/volunteer/VolunteerDashboard';
 import Leaderboard from './screens/Restaurants/Leaderboard';
 import Notification from './screens/Restaurants/Notification';
 import Statistics from './screens/Restaurants/Statistics';
-import EmergencyAlerts from './screens/EmergencyAlerts';
+import EmergencyAlerts from './screens/oldage/EmergencyAlerts';
 import RealTimeFoodTracking from './screens/RealTimeFoodTracking';
 import DisasterRelief from './screens/DisasterRelief';
 import HomePage from './screens/Restaurants/HomePage';
@@ -29,7 +29,7 @@ export default function App() {
     <AuthProvider>
     <NavigationContainer>
 
-      <Stack.Navigator initialRouteName="Oldage" screenOptions={{headerShown: false}}>
+      <Stack.Navigator initialRouteName="LandingPage" screenOptions={{headerShown: false}}>
         <Stack.Screen name="LandingPage" component={LandingPage} />
         <Stack.Screen name="LoginScreen" component={LoginScreen}/>
         <Stack.Screen name="RegisterScreen" component={RegisterScreen}/>
