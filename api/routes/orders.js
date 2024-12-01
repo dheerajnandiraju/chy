@@ -1,8 +1,19 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
-// Assuming you've already defined the Order model
-const router = express.Router();
+const nodemailer = require('nodemailer');
 const Order = require('../models/Order');
+const Organization = require('../models/Organization');  // Assuming you have this model
+const router = express.Router();
+
+// Create Nodemailer transporter using Gmail
+const transporter = nodemailer.createTransport({
+  service: 'gmail', // Use Gmail service
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
 
 // Middleware to parse JSON
 router.use(express.json());
@@ -10,7 +21,7 @@ router.use(express.json());
 // POST Request: Create a new order
 router.post('/orders', async (req, res) => {
   try {
-    const { restaurant, meal, expiration,servings } = req.body;
+    const { restaurant, meal, expiration, servings } = req.body;
     console.log(req.body);
 
     // Validate the incoming data (you can further expand validation as needed)
@@ -22,12 +33,31 @@ router.post('/orders', async (req, res) => {
       restaurant: restaurant,
       meal: meal,
       status: "Pending",
-      servings:servings,
+      servings: servings,
       expirationDays: expiration.days,
       expirationHours: expiration.hours,
     });
 
     await newOrder.save();
+
+    // Notify organizations when a new order is posted
+    const organizations = await Organization.find();  // Assuming you have an Organization model
+    organizations.forEach((org) => {
+      const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: org.email, // Assuming organizations have an email field
+        subject: 'New Order Posted',
+        text: `Dear ${org.name},\n\nA new order has been posted by ${restaurant}. Please check the details and accept the order if you can assist.\n\nOrder Details:\nMeal: ${meal}\nExpiration: ${expiration.days} days, ${expiration.hours} hours\n\nThank you!`,
+      };
+
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.log('Error sending email:', error);
+        } else {
+          console.log('Email sent:', info.response);
+        }
+      });
+    });
 
     return res.status(201).json({ message: 'Order created successfully', order: newOrder });
   } catch (error) {
@@ -50,13 +80,36 @@ router.put('/orders/:orderId/organization', async (req, res) => {
     // Find and update the order
     const order = await Order.findByIdAndUpdate(
       orderId,
-      { 'organization.name': name, 'organization.phoneNumber': phoneNumber, 'organization.location': location,status:"In Progress" },
+      { 
+        'organization.name': name,
+        'organization.phoneNumber': phoneNumber,
+        'organization.location': location,
+        status: "In Progress"
+      },
       { new: true }
     );
-    console.log(order)
 
     if (!order) {
       return res.status(404).json({ error: 'Order not found' });
+    }
+
+    // Notify the volunteer when the order is accepted by the organization
+    const volunteer = order.volunteer; // Assuming volunteer is stored in the order model
+    if (volunteer) {
+      const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: volunteer.email,  // Assuming volunteer has an email field
+        subject: 'Order Accepted by Organization',
+        text: `Dear ${volunteer.name},\n\nThe organization ${name} has accepted your order. Please proceed with the next steps.\n\nOrder Details:\nMeal: ${order.meal}\nOrganization: ${name}\nPhone: ${phoneNumber}\nLocation: ${location}\n\nThank you!`,
+      };
+
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.log('Error sending email:', error);
+        } else {
+          console.log('Email sent:', info.response);
+        }
+      });
     }
 
     return res.status(200).json({ message: 'Organization details updated successfully', order });
@@ -80,7 +133,12 @@ router.put('/orders/:orderId/volunteer', async (req, res) => {
     // Find and update the order
     const order = await Order.findByIdAndUpdate(
       orderId,
-      { 'volunteer.name': name, 'volunteer.phoneNumber': phoneNumber, 'volunteer.extra': extra,'status':'Picked' },
+      { 
+        'volunteer.name': name,
+        'volunteer.phoneNumber': phoneNumber,
+        'volunteer.extra': extra,
+        status: 'Picked'
+      },
       { new: true }
     );
 
