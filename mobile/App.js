@@ -8,7 +8,6 @@ import LoginScreen from './screens/LoginScreen';
 import RestaurantsDashboard from './screens/Restaurants/RestaurantsDashboard';
 import RegisterScreen from './screens/RegisterScreen';
 import FoodFridges from './screens/FoodFridges/FoodFridges';
-import CommunityImpact from './screens/CommunityImpact';
 import VolunteerDashboard from './screens/volunteer/VolunteerDashboard';
 import Leaderboard from './screens/Restaurants/Leaderboard';
 import Notification from './screens/Restaurants/Notification';
@@ -31,14 +30,12 @@ export default function App() {
     <AuthProvider>
     <NavigationContainer>
 
-      <Stack.Navigator initialRouteName="Oldage" screenOptions={{headerShown: false}}>
+      <Stack.Navigator initialRouteName="FarmersDashboard" screenOptions={{headerShown: false}}>
         <Stack.Screen name="LandingPage" component={LandingPage} />
-        <Stack.Screen name="FarmersForums" component={ForumsScreen}/>
         <Stack.Screen name="LoginScreen" component={LoginScreen}/>
         <Stack.Screen name="RegisterScreen" component={RegisterScreen}/>
         <Stack.Screen name='RestaurantsDashboard' component={RestaurantsDashboard}/>
         <Stack.Screen name="FoodFridges" component={FoodFridges}/>
-        <Stack.Screen name="CommunityImpact" component={CommunityImpact}/>
         <Stack.Screen name="VolunteerDashboard" component={VolunteerDashboard}/>
         <Stack.Screen name="EmergencyAlerts" component={EmergencyAlerts}/>
         <Stack.Screen name='RestaurnatsLeaderboard' component={Leaderboard}/>
