@@ -26,12 +26,18 @@
       "foodbank": "Foodbank"
     },
     "submit": "Post for Sale/Donation",
+    "success": "Produce posted for sale successfully! NGOs and volunteers will be notified.",
+    "donated-success": "Produce posted for donation successfully! NGOs and volunteers will be notified.",
     "pending-purchases": "Pending Purchases",
     "price": "Price",
     "organization": "Organization",
     "completed-purchases": "Completed Purchases",
     "crop": "Crop",
     "buyer": "Buyer",
-    "quantity": "Quantity"
+    "quantity": "Quantity",
+    "additional-notes": "Additional Notes",
+    "select-organization": "Select Organization",
+    "update-purchase": "Update Purchase",
+    "close": "Close"
   }
 }
