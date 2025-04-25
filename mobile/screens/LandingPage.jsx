@@ -1,18 +1,24 @@
-import React, { useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
+  TextInput,
   TouchableOpacity,
   StyleSheet,
   ScrollView,
   Image,
   ImageBackground,
   Dimensions,
-  Animated,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableWithoutFeedback,
+  Keyboard,
+  ActivityIndicator,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useAuth } from '../context/AuthContext';
 
 const { width } = Dimensions.get('window');
 
@@ -26,202 +32,200 @@ const COLORS = {
   white: '#FFFFFF',
   lightGray: '#E5E7EB',
   darkOverlay: 'rgba(17, 24, 39, 0.7)',
+  error: '#EF4444',
 };
 
 const LandingPage = () => {
   const navigation = useNavigation();
-  const fadeAnim = new Animated.Value(0);
-  const slideAnim = new Animated.Value(50);
-  const cardAnim = new Animated.Value(0);
+  const { login, loading, error } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [localError, setLocalError] = useState('');
 
-  useEffect(() => {
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 800,
-        useNativeDriver: true,
-      }),
-      Animated.timing(slideAnim, {
-        toValue: 0,
-        duration: 800,
-        useNativeDriver: true,
-      }),
-      Animated.stagger(200, [
-        Animated.timing(cardAnim, {
-          toValue: 1,
-          duration: 600,
-          useNativeDriver: true,
-        }),
-      ]),
-    ]).start();
-  }, []);
+  const handleLogin = async () => {
+    try {
+      setLocalError('');
+      
+      // Basic validation
+      if (!email || !password) {
+        setLocalError('Please enter both email and password');
+        return;
+      }
+
+      // Email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        setLocalError('Please enter a valid email address');
+        return;
+      }
+
+      // Attempt login
+      const user = await login(email, password);
+
+      // Navigate based on user role
+      switch (user.role) {
+        case 'Restaurant':
+          navigation.navigate('HomePage');
+          break;
+        case 'Volunteer':
+          navigation.navigate('VolunteerDashboard');
+          break;
+        case 'NGO':
+          navigation.navigate('Oldage');
+          break;
+        case 'Farmer':
+          navigation.navigate('FarmersDashboard');
+          break;
+        default:
+          setLocalError('Invalid user role');
+      }
+    } catch (error) {
+      setLocalError(error.message || 'Login failed. Please try again.');
+    }
+  };
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      <Animated.View
-        style={[
-          styles.heroSection,
-          { opacity: fadeAnim, transform: [{ translateY: slideAnim }] },
-        ]}
-      >
-        <ImageBackground
-          source={require('../assets/0.png')}
-          style={styles.imageBackground}
-          imageStyle={styles.image}
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={{ flex: 1 }}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <ScrollView
+          contentContainerStyle={styles.container}
+          keyboardShouldPersistTaps="handled"
         >
-          <LinearGradient
-            colors={[COLORS.darkOverlay, COLORS.darkOverlay]}
-            style={styles.overlay}
-          >
-            <Image style={styles.logo} source={require('../assets/wText.png')} />
-            <Text style={styles.heroTitle}>Bridging Communities</Text>
-            <Text style={styles.heroSubtitle}>Empowering Food Rescue</Text>
-          </LinearGradient>
-        </ImageBackground>
-      </Animated.View>
-
-      <Animated.View
-        style={[
-          styles.buttonSection,
-          { opacity: fadeAnim, transform: [{ translateY: slideAnim }] },
-        ]}
-      >
-        <Text style={styles.sectionTitle}>Choose Your Role</Text>
-        <View style={styles.buttonContainer}>
-          {[
-            { name: 'Restaurant', icon: 'cutlery', route: 'HomePage' },
-            { name: 'Volunteer', icon: 'heart', route: 'VolunteerDashboard' },
-            { name: 'Oldage Home', icon: 'building', route: 'Oldage' },
-            { name: 'Farmer', icon: 'leaf', route: 'FarmersDashboard' },
-          ].map((role, index) => (
-            <Animated.View
-              key={role.name}
-              style={{ opacity: cardAnim, transform: [{ translateY: cardAnim.interpolate({ inputRange: [0, 1], outputRange: [50, 0] }) }] }}
+          <View style={styles.heroSection}>
+            <ImageBackground
+              source={require('../assets/0.png')}
+              style={styles.imageBackground}
+              imageStyle={styles.image}
             >
-              <TouchableOpacity
-                style={styles.button}
-                onPress={() => navigation.navigate(role.route)}
-                activeOpacity={0.8}
+              <LinearGradient
+                colors={[COLORS.darkOverlay, COLORS.darkOverlay]}
+                style={styles.overlay}
               >
-                <LinearGradient
-                  colors={[COLORS.primary, COLORS.secondary]}
-                  style={styles.buttonGradient}
-                >
-                  <Icon name={role.icon} size={20} color={COLORS.white} style={styles.buttonIcon} />
-                  <Text style={styles.buttonText}>{`I am a ${role.name}`}</Text>
-                </LinearGradient>
-              </TouchableOpacity>
-            </Animated.View>
-          ))}
-        </View>
-
-        <TouchableOpacity
-          style={[styles.donateButton, { backgroundColor: COLORS.accent }]}
-          onPress={() => alert('Donate Now pressed')}
-          activeOpacity={0.8}
-        >
-          <View style={styles.donateButtonContent}>
-            <Icon name="gift" size={20} color={COLORS.white} style={styles.buttonIcon} />
-            <Text style={styles.donateButtonText}>Donate Now</Text>
+                <Image style={styles.logo} source={require('../assets/wText.png')} />
+                <Text style={styles.heroTitle}>Bridging Communities</Text>
+                <Text style={styles.heroSubtitle}>Empowering Food Rescue</Text>
+              </LinearGradient>
+            </ImageBackground>
           </View>
-        </TouchableOpacity>
-      </Animated.View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>How It Works</Text>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.featureScroll}
-          contentContainerStyle={styles.featureScrollContent}
-        >
-          {[
-            { title: 'Restaurants', image: require('../assets/1.png'), icon: 'cutlery' },
-            { title: 'NGOs', image: require('../assets/3.png'), icon: 'building' },
-            { title: 'Volunteers', image: require('../assets/4.png'), icon: 'heart' },
-            { title: 'Organizations', image: require('../assets/5.png'), icon: 'users' },
-          ].map((feature, index) => (
-            <Animated.View
-              key={feature.title}
-              style={{ opacity: cardAnim, transform: [{ translateY: cardAnim.interpolate({ inputRange: [0, 1], outputRange: [50, 0] }) }] }}
+          <View style={styles.loginSection}>
+            <Text style={styles.sectionTitle}>Login to Continue</Text>
+            
+            {(error || localError) && (
+              <Text style={styles.errorText}>{error || localError}</Text>
+            )}
+
+            <TextInput
+              placeholder="Enter your email"
+              value={email}
+              onChangeText={setEmail}
+              style={styles.input}
+              autoCapitalize="none"
+              keyboardType="email-address"
+              editable={!loading}
+            />
+            <TextInput
+              placeholder="Enter your password"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+              style={styles.input}
+              editable={!loading}
+            />
+            <TouchableOpacity 
+              style={[styles.loginButton, loading && styles.loginButtonDisabled]} 
+              onPress={handleLogin}
+              disabled={loading}
             >
-              <FeatureCard title={feature.title} imageUrl={feature.image} icon={feature.icon} />
-            </Animated.View>
-          ))}
+              {loading ? (
+                <ActivityIndicator color={COLORS.white} />
+              ) : (
+                <Text style={styles.buttonText}>Continue</Text>
+              )}
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>How It Works</Text>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={styles.featureScroll}
+              contentContainerStyle={styles.featureScrollContent}
+            >
+              {[
+                { title: 'Restaurants', image: require('../assets/1.png'), icon: 'cutlery' },
+                { title: 'NGOs', image: require('../assets/3.png'), icon: 'building' },
+                { title: 'Volunteers', image: require('../assets/4.png'), icon: 'heart' },
+                { title: 'Organizations', image: require('../assets/5.png'), icon: 'users' },
+              ].map((feature, index) => (
+                <FeatureCard key={feature.title} title={feature.title} imageUrl={feature.image} icon={feature.icon} />
+              ))}
+            </ScrollView>
+          </View>
+
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Our Impact</Text>
+            <View style={styles.metricsContainer}>
+              {[
+                { icon: 'coffee', label: 'Meals Donated', value: '500,000' },
+                { icon: 'recycle', label: 'Food Saved', value: '12,000 kg' },
+                { icon: 'users', label: 'Volunteers', value: '1,500' },
+                { icon: 'home', label: 'NGOs', value: '200' },
+              ].map((metric, index) => (
+                <MetricCard key={metric.label} icon={metric.icon} label={metric.label} value={metric.value} />
+              ))}
+            </View>
+          </View>
+
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Leaderboard</Text>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={styles.leaderboardScroll}
+              contentContainerStyle={styles.leaderboardScrollContent}
+            >
+              {[
+                { title: 'Top Restaurants', content: 'Meals Donated', image: require('../assets/10.png') },
+                { title: 'Top Volunteers', content: 'Hours Contributed', image: require('../assets/11.png') },
+                { title: 'Top NGOs', content: 'Meals Distributed', image: require('../assets/12.png') },
+              ].map((leader, index) => (
+                <LeaderboardCard key={leader.title} title={leader.title} content={leader.content} imageUrl={leader.image} />
+              ))}
+            </ScrollView>
+          </View>
+
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Testimonials</Text>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={styles.testimonialsScroll}
+              contentContainerStyle={styles.testimonialsScrollContent}
+            >
+              {[
+                { content: 'John Doe', subContent: 'Restaurant Owner', image: require('../assets/13.png') },
+                { content: 'Jane Smith', subContent: 'Volunteer', image: require('../assets/14.png') },
+                { content: 'NGO Team', subContent: 'NGO Representative', image: require('../assets/15.png') },
+              ].map((testimonial, index) => (
+                <TestimonialCard
+                  key={testimonial.content}
+                  content={testimonial.content}
+                  subContent={testimonial.subContent}
+                  imageUrl={testimonial.image}
+                />
+              ))}
+            </ScrollView>
+          </View>
+
+          <Text style={styles.footerText}>© 2025 Motiff AI. All rights reserved.</Text>
         </ScrollView>
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Our Impact</Text>
-        <View style={styles.metricsContainer}>
-          {[
-            { icon: 'coffee', label: 'Meals Donated', value: '500,000' },
-            { icon: 'recycle', label: 'Food Saved', value: '12,000 kg' },
-            { icon: 'users', label: 'Volunteers', value: '1,500' },
-            { icon: 'home', label: 'NGOs', value: '200' },
-          ].map((metric, index) => (
-            <Animated.View
-              key={metric.label}
-              style={{ opacity: cardAnim, transform: [{ translateY: cardAnim.interpolate({ inputRange: [0, 1], outputRange: [50, 0] }) }] }}
-            >
-              <MetricCard icon={metric.icon} label={metric.label} value={metric.value} />
-            </Animated.View>
-          ))}
-        </View>
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Leaderboard</Text>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.leaderboardScroll}
-          contentContainerStyle={styles.leaderboardScrollContent}
-        >
-          {[
-            { title: 'Top Restaurants', content: 'Meals Donated', image: require('../assets/10.png') },
-            { title: 'Top Volunteers', content: 'Hours Contributed', image: require('../assets/11.png') },
-            { title: 'Top NGOs', content: 'Meals Distributed', image: require('../assets/12.png') },
-          ].map((leader, index) => (
-            <Animated.View
-              key={leader.title}
-              style={{ opacity: cardAnim, transform: [{ translateY: cardAnim.interpolate({ inputRange: [0, 1], outputRange: [50, 0] }) }] }}
-            >
-              <LeaderboardCard title={leader.title} content={leader.content} imageUrl={leader.image} />
-            </Animated.View>
-          ))}
-        </ScrollView>
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Testimonials</Text>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.testimonialsScroll}
-          contentContainerStyle={styles.testimonialsScrollContent}
-        >
-          {[
-            { content: 'John Doe', subContent: 'Restaurant Owner', image: require('../assets/13.png') },
-            { content: 'Jane Smith', subContent: 'Volunteer', image: require('../assets/14.png') },
-            { content: 'NGO Team', subContent: 'NGO Representative', image: require('../assets/15.png') },
-          ].map((testimonial, index) => (
-            <Animated.View
-              key={testimonial.content}
-              style={{ opacity: cardAnim, transform: [{ translateY: cardAnim.interpolate({ inputRange: [0, 1], outputRange: [50, 0] }) }] }}
-            >
-              <TestimonialCard
-                content={testimonial.content}
-                subContent={testimonial.subContent}
-                imageUrl={testimonial.image}
-              />
-            </Animated.View>
-          ))}
-        </ScrollView>
-      </View>
-
-      <Text style={styles.footerText}>© 2025 Motiff AI. All rights reserved.</Text>
-    </ScrollView>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -265,7 +269,7 @@ const TestimonialCard = ({ content, subContent, imageUrl }) => (
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     backgroundColor: COLORS.background,
   },
   heroSection: {
@@ -305,7 +309,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: '500',
   },
-  buttonSection: {
+  loginSection: {
     padding: 24,
     backgroundColor: COLORS.background,
     borderTopLeftRadius: 24,
@@ -319,52 +323,32 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     textAlign: 'center',
   },
-  buttonContainer: {
-    gap: 16,
-    alignItems: 'center',
-  },
-  button: {
+  input: {
     width: width * 0.9,
+    padding: 16,
     borderRadius: 12,
-    overflow: 'hidden',
+    marginBottom: 16,
+    backgroundColor: COLORS.white,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
   },
-  buttonGradient: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 18,
-  },
-  buttonIcon: {
-    marginRight: 12,
-  },
-  buttonText: {
-    color: COLORS.white,
-    fontSize: 16,
-    fontWeight: '700',
-  },
-  donateButton: {
+  loginButton: {
     width: width * 0.9,
-    marginTop: 24,
+    padding: 16,
     borderRadius: 12,
-    overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-    alignSelf: 'center',
-  },
-  donateButtonContent: {
-    flexDirection: 'row',
+    backgroundColor: COLORS.primary,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 18,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
-  donateButtonText: {
+  buttonText: {
     color: COLORS.white,
     fontSize: 16,
     fontWeight: '700',
@@ -524,6 +508,15 @@ const styles = StyleSheet.create({
     padding: 24,
     fontSize: 14,
     fontWeight: '500',
+  },
+  errorText: {
+    color: COLORS.error,
+    fontSize: 14,
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  loginButtonDisabled: {
+    opacity: 0.7,
   },
 });
 
