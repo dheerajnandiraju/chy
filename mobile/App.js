@@ -31,7 +31,9 @@ export default function App() {
     <NavigationContainer>
 
       <Stack.Navigator initialRouteName="LandingPage">
-        <Stack.Screen name="LandingPage" component={LandingPage} />
+        <Stack.Screen options={{
+    headerShown: false,
+  }} name="LandingPage" component={LandingPage} />
         {/* <Stack.Screen name="LoginScreen" component={LoginScreen}/>
         <Stack.Screen name="RegisterScreen" component={RegisterScreen}/> */}
         <Stack.Screen name='RoleSelectionPage' component={RoleSelectionScreen}/>
@@ -45,7 +47,9 @@ export default function App() {
         <Stack.Screen name="RealTimeFoodTracking" component={RealTimeFoodTracking} />
         <Stack.Screen name="DisasterRelief" component={DisasterRelief} />
         <Stack.Screen name="HomePage" component={HomePage}/>
-        <Stack.Screen name="FarmersDashboard" component={FarmersDashboard}/>
+        <Stack.Screen options={{
+    headerShown: false,
+  }} name="FarmersDashboard" component={FarmersDashboard}/>
         <Stack.Screen name="PurchaseDetails" component={PurchaseDetails} />
         <Stack.Screen name="Oldage" component={OldAgeHomesDashboard} />
         <Stack.Screen name="Quality" component={Quality} /> 
