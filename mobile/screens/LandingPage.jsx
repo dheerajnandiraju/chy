@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
+  TextInput,
   TextInput,
   TouchableOpacity,
   StyleSheet,
@@ -17,6 +19,7 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useAuth } from '../context/AuthContext';
 
 const { width } = Dimensions.get('window');
 
@@ -26,6 +29,7 @@ const COLORS = {
   text: '#1F2A44',
   white: '#FFFFFF',
   darkOverlay: 'rgba(17, 24, 39, 0.7)',
+  error: '#EF4444',
 };
 
 const LandingPage = () => {

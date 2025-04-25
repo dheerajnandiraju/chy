@@ -14,6 +14,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../context/AuthContext';
 import EmergencyAlerts from './EmergencyAlerts';
 import Quality from './Quality';
+import { API_ENDPOINTS, handleApiError } from '../../config/api';
 
 const { width } = Dimensions.get('window');
 
@@ -36,45 +37,138 @@ const OldAgeHomesDashboard = () => {
   const [currentPage, setCurrentPage] = useState('main');
   const [priorityLevel, setPriorityLevel] = useState('High');
   const [feedback, setFeedback] = useState('');
-  const [mealRequests, setMealRequests] = useState([]);
+  const [availableMeals, setAvailableMeals] = useState([]);
+  const [pendingTasks, setPendingTasks] = useState([]);
   const { user } = useAuth();
 
   useEffect(() => {
-    fetchMealRequests();
+    fetchAvailableMeals();
+    if (currentPage === 'trackVolunteer') {
+      fetchPendingTasks();
+    }
   }, [currentPage]);
 
-  const fetchMealRequests = async () => {
+  const fetchAvailableMeals = async () => {
     try {
-      const response = await fetch('http://10.11.49.240:3000/api/orders');
+      const response = await fetch(API_ENDPOINTS.RESTAURANT_ALL);
       const data = await response.json();
-      const data1 = data.orders.filter(each => each.status === 'Pending');
-      setMealRequests(data1);
+      console.log('Available meals:', data);
+      setAvailableMeals(data);
     } catch (error) {
-      console.error('Error fetching meal requests:', error);
+      console.error('Error fetching available meals:', error);
+      const errorData = handleApiError(error);
+      alert('Error fetching meals: ' + errorData.message);
     }
   };
 
-  const handleCheckout = async (orderId) => {
+  const fetchPendingTasks = async () => {
     try {
-      const response = await fetch(`http://10.11.49.240:3000/api/orders/${orderId}/organization`, {
-        method: 'PUT',
+      const response = await fetch(API_ENDPOINTS.PENDING_TASKS);
+      if (!response.ok) {
+        throw new Error('Failed to fetch pending tasks');
+      }
+      const data = await response.json();
+      console.log('Pending tasks:', data);
+      setPendingTasks(data);
+    } catch (error) {
+      console.error('Error fetching pending tasks:', error);
+      alert('Error fetching pending tasks: ' + error.message);
+    }
+  };
+
+  const handleRequestMeal = async (mealId) => {
+    try {
+      console.log('Requesting meal:', mealId);
+      
+      // First, get the meal details
+      console.log('Fetching meal details...');
+      const mealResponse = await fetch(API_ENDPOINTS.RESTAURANT_MEAL(mealId));
+      if (!mealResponse.ok) {
+        const errorData = await mealResponse.json().catch(() => ({ message: 'Failed to fetch meal details' }));
+        throw new Error(errorData.message || `Failed to fetch meal details: ${mealResponse.status}`);
+      }
+      const mealData = await mealResponse.json();
+      console.log('Meal details:', mealData);
+
+      // Create an available task
+      console.log('Creating available task...');
+      const taskResponse = await fetch(API_ENDPOINTS.VOLUNTEER_TASKS, {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          name: user.fullName,
-          location: user.address,
-          phoneNumber: user.contactNumber,
+          foodRequestId: mealId,
+          sender: {
+            name: mealData.restaurantName || 'Restaurant',
+            address: mealData.address ? 
+              `${mealData.address.street}, ${mealData.address.city}, ${mealData.address.pincode}` : 
+              'Address not provided'
+          },
+          receiver: {
+            name: user?.fullName || 'Old Age Home',
+            address: user?.address || 'Address not provided'
+          },
+          foodDetails: {
+            foodName: mealData.foodName,
+            serves: mealData.serves
+          },
+          status: 'Available'
         }),
       });
 
-      if (response.status === 200) {
-        alert('Order checked out successfully!');
-        setMealRequests(mealRequests.filter(order => order._id !== orderId));
+      if (!taskResponse.ok) {
+        const errorData = await taskResponse.json().catch(() => ({ message: 'Failed to create task' }));
+        throw new Error(errorData.message || `Failed to create task: ${taskResponse.status}`);
       }
+
+      const taskData = await taskResponse.json();
+      console.log('Task created:', taskData);
+
+      // Delete the meal from available meals
+      console.log('Deleting meal from available meals...');
+      const deleteResponse = await fetch(API_ENDPOINTS.RESTAURANT_MEAL(mealId), {
+        method: 'DELETE',
+      });
+
+      if (!deleteResponse.ok) {
+        const errorData = await deleteResponse.json().catch(() => ({ message: 'Failed to delete meal' }));
+        throw new Error(errorData.message || `Failed to delete meal: ${deleteResponse.status}`);
+      }
+
+      const deleteData = await deleteResponse.json();
+      console.log('Meal deleted:', deleteData);
+
+      alert('Meal requested successfully!');
+      fetchAvailableMeals(); // Refresh the available meals list
     } catch (error) {
-      console.error('Error checking out meal:', error);
-      alert('Failed to check out the meal request. Please try again.');
+      console.error('Error requesting meal:', error);
+      alert(`Error requesting meal: ${error.message}`);
+    }
+  };
+
+  const handleConfirmDelivery = async (taskId) => {
+    try {
+      console.log('Confirming delivery for task:', taskId);
+      const response = await fetch(API_ENDPOINTS.CONFIRM_DELIVERY(taskId), {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: 'Failed to confirm delivery' }));
+        throw new Error(errorData.message || `Failed to confirm delivery: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log('Delivery confirmed:', data);
+      alert('Delivery confirmed successfully!');
+      fetchPendingTasks(); // Refresh the pending tasks list
+    } catch (error) {
+      console.error('Error confirming delivery:', error);
+      alert(`Error confirming delivery: ${error.message}`);
     }
   };
 
@@ -100,7 +194,7 @@ const OldAgeHomesDashboard = () => {
 
       <View style={styles.quickAccessContainer}>
         {[
-          { page: 'mealRequests', icon: 'restaurant-outline', text: 'Meal Requests' },
+          { page: 'meals', icon: 'restaurant-outline', text: 'Meal Requests' },
           { page: 'trackVolunteer', icon: 'location-outline', text: 'Track Volunteer' },
           { page: 'emergencyAlerts', icon: 'alert-circle-outline', text: 'Emergency Alerts' },
         ].map((item, index) => (
@@ -152,29 +246,32 @@ const OldAgeHomesDashboard = () => {
     </ScrollView>
   );
 
-  const renderMealRequests = () => (
-    <ScrollView showsVerticalScrollIndicator={false}>
-      <Text style={styles.pageTitle}>Meal Requests</Text>
-      {mealRequests.length > 0 ? (
-        mealRequests.map((order) => (
-          <View key={order._id} style={styles.mealRequestItem}>
+  const renderAvailableMeals = () => (
+    <ScrollView style={styles.pageContainer}>
+      <Text style={styles.pageTitle}>Available Meals</Text>
+      {availableMeals.length > 0 ? (
+        availableMeals.map((meal) => (
+          <View key={meal._id} style={styles.mealItem}>
             <Image source={require('../../assets/100.png')} style={styles.restaurantLogo} />
-            <View style={styles.mealRequestInfo}>
-              <Text style={styles.restaurantName}>{order.restaurant.name}</Text>
+            <View style={styles.mealInfo}>
+              <Text style={styles.restaurantName}>{meal.restaurantName}</Text>
               <Text style={styles.mealDetails}>
-                {order.mealType}, {order.servings} servings, expiring in {order.expirationDays} days, {order.expirationHours} hours
+                {meal.foodName}, {meal.serves} servings
+              </Text>
+              <Text style={styles.expiryDetails}>
+                Expires in: {meal.expiry.days} days, {meal.expiry.hours} hours
               </Text>
               <TouchableOpacity
-                style={styles.checkoutButton}
-                onPress={() => handleCheckout(order._id)}
+                style={styles.requestButton}
+                onPress={() => handleRequestMeal(meal._id)}
               >
-                <Text style={styles.checkoutButtonText}>Check Out</Text>
+                <Text style={styles.requestButtonText}>Request Meal</Text>
               </TouchableOpacity>
             </View>
           </View>
         ))
       ) : (
-        <Text style={styles.noDataText}>No meal requests available at the moment.</Text>
+        <Text style={styles.noDataText}>No meals available at the moment.</Text>
       )}
     </ScrollView>
   );
@@ -182,14 +279,31 @@ const OldAgeHomesDashboard = () => {
   const renderTrackVolunteer = () => (
     <ScrollView style={styles.pageContainer} showsVerticalScrollIndicator={false}>
       <Text style={styles.pageTitle}>Track Volunteer</Text>
-      <Image source={require('../../assets/76.png')} style={styles.mapImage} />
-      <View style={styles.volunteerInfo}>
-        <Text style={styles.volunteerName}>John Doe</Text>
-        <Text style={styles.volunteerStatus}>5 minutes away</Text>
-      </View>
-      <TouchableOpacity style={styles.callButton}>
-        <Text style={styles.callButtonText}>Call John Doe</Text>
-      </TouchableOpacity>
+      {pendingTasks.length > 0 ? (
+        pendingTasks.map((task) => (
+          <View key={task._id} style={styles.taskItem}>
+            <View style={styles.taskInfo}>
+              <Text style={styles.taskTitle}>Delivery from {task.sender?.name || 'Restaurant'}</Text>
+              <Text style={styles.taskDetails}>
+                {task.foodDetails?.foodName}, {task.foodDetails?.serves} servings
+              </Text>
+              <Text style={styles.taskStatus}>
+                Status: {task.deliveryStatus}
+              </Text>
+              {task.deliveryStatus === 'Delivered' && (
+                <TouchableOpacity
+                  style={styles.confirmButton}
+                  onPress={() => handleConfirmDelivery(task._id)}
+                >
+                  <Text style={styles.confirmButtonText}>Confirm Delivery</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+          </View>
+        ))
+      ) : (
+        <Text style={styles.noDataText}>No pending deliveries at the moment.</Text>
+      )}
     </ScrollView>
   );
 
@@ -230,14 +344,14 @@ const OldAgeHomesDashboard = () => {
   return (
     <SafeAreaView style={styles.container}>
       {currentPage === 'main' && renderMainDashboard()}
-      {currentPage === 'mealRequests' && renderMealRequests()}
+      {currentPage === 'meals' && renderAvailableMeals()}
       {currentPage === 'trackVolunteer' && <Quality />}
       {currentPage === 'emergencyAlerts' && <EmergencyAlerts />}
 
       <View style={styles.tabBar}>
         {[
           { page: 'main', icon: 'home-outline' },
-          { page: 'mealRequests', icon: 'restaurant-outline' },
+          { page: 'meals', icon: 'restaurant-outline' },
           { page: 'trackVolunteer', icon: 'checkmark-circle-outline' },
           { page: 'emergencyAlerts', icon: 'alert-circle-outline' },
         ].map((tab, index) => (
@@ -422,12 +536,12 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     textAlign: 'center',
   },
-  mealRequestItem: {
+  mealItem: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 16,
     padding: 12,
-    backgroundColor: COLORS.cardBg,
+    backgroundColor: '#FFFFFF',
     borderRadius: 12,
     elevation: 4,
   },
@@ -436,39 +550,41 @@ const styles = StyleSheet.create({
     height: 50,
     borderRadius: 25,
   },
-  mealRequestInfo: {
+  mealInfo: {
     marginLeft: 12,
     flex: 1,
   },
   restaurantName: {
     fontSize: 16,
     fontWeight: '600',
-    color: COLORS.textPrimary,
+    color: '#1F2A44',
     marginBottom: 4,
   },
   mealDetails: {
     fontSize: 14,
-    color: COLORS.textSecondary,
+    color: '#6B7280',
+    marginBottom: 4,
   },
-  checkoutButton: {
-    backgroundColor: COLORS.primary,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
+  expiryDetails: {
+    fontSize: 12,
+    color: '#9CA3AF',
+    marginBottom: 8,
+  },
+  requestButton: {
+    backgroundColor: '#10B981',
+    padding: 8,
     borderRadius: 8,
-    alignSelf: 'flex-start',
-    marginTop: 8,
-    elevation: 4,
+    alignItems: 'center',
   },
-  checkoutButtonText: {
-    color: COLORS.white,
+  requestButtonText: {
+    color: '#FFFFFF',
     fontSize: 14,
     fontWeight: '600',
   },
   noDataText: {
-    fontSize: 16,
-    color: COLORS.textSecondary,
     textAlign: 'center',
-    marginTop: 16,
+    color: '#6B7280',
+    marginTop: 20,
   },
   mapImage: {
     width: '100%',
@@ -554,6 +670,44 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   raiseAlertButtonText: {
+    color: COLORS.white,
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  taskItem: {
+    backgroundColor: COLORS.cardBg,
+    padding: 16,
+    marginBottom: 16,
+    borderRadius: 12,
+    elevation: 4,
+  },
+  taskInfo: {
+    flex: 1,
+  },
+  taskTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: COLORS.textPrimary,
+    marginBottom: 8,
+  },
+  taskDetails: {
+    fontSize: 14,
+    color: COLORS.textSecondary,
+    marginBottom: 4,
+  },
+  taskStatus: {
+    fontSize: 14,
+    color: COLORS.primary,
+    marginBottom: 8,
+  },
+  confirmButton: {
+    backgroundColor: COLORS.primary,
+    padding: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  confirmButtonText: {
     color: COLORS.white,
     fontSize: 16,
     fontWeight: '600',

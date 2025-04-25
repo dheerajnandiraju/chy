@@ -1,17 +1,12 @@
 const mongoose = require('mongoose');
 
 const foodRequestSchema = new mongoose.Schema({
-    foodId: { type: mongoose.Schema.Types.ObjectId, ref: 'FoodAvailable', required: true },
-    requesterName: { type: String, required: true },
-    requesterType: { type: String, enum: ['NGO', 'OldAgeHome', 'Orphanage'], required: true },
-    location: {
-      latitude: Number,
-      longitude: Number,
-      address: String
-    },
-    requestedAt: { type: Date, default: Date.now },
-    status: { type: String, enum: ['Requested', 'Accepted', 'Delivered'], default: 'Requested' }
-  });
-  
-  module.exports = mongoose.model("FoodRequest", foodRequestSchema);
-  
+  croptype: { type: String, required: true },
+  additional: { type: String },
+  activityType: { type: String, required: true },
+  price: { type: Number, default: 0 },
+  ngo: { type: String, required: true },
+  status: { type: String, enum: ['pending', 'completed'], default: 'pending' }
+});
+
+module.exports = mongoose.model("FoodRequest", foodRequestSchema);

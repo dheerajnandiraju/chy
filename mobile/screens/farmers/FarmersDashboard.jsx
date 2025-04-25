@@ -16,6 +16,7 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import { Picker } from "@react-native-picker/picker";
 import { useTranslation } from "react-i18next";
 import { Language } from "../../components/language";
+import { API_ENDPOINTS, handleApiError } from '../../config/api';
 
 // Updated color palette for a modern look
 const COLORS = {
@@ -47,15 +48,10 @@ const FarmersDashboard = () => {
   const [selectedPurchase, setSelectedPurchase] = useState(null);
 
   // Stats for pending/completed purchases
-  const [pendingPurchases, setPendingPurchases] = useState([
-    { id: 1, produceType: "Tomatoes", price: "$5", organization: "NGO B", notes: "Handle with care", status: "pending" },
-    { id: 2, produceType: "Potatoes", price: "$3", organization: "FoodBank A", notes: "Urgent", status: "pending" },
-  ]);
-
-  const [completedPurchases, setCompletedPurchases] = useState([
-    { id: 1, produceType: "Carrots", buyer: "John Doe", price: "$4", quantity: "100kg", status: "completed" },
-    { id: 2, produceType: "Cabbages", buyer: "Jane Smith", price: "$6", quantity: "50kg", status: "completed" },
-  ]);
+  const [pendingPurchases, setPendingPurchases] = useState([]);
+  const [completedPurchases, setCompletedPurchases] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const organizations = [
     { label: "FoodBank A", value: "foodbank_a" },
@@ -64,9 +60,116 @@ const FarmersDashboard = () => {
     { label: "NGO D", value: "ngo_d" },
   ];
 
-  const handlePostProduce = () => {
-    setShowSuccess(true);
-    setTimeout(() => setShowSuccess(false), 3000);
+  useEffect(() => {
+    fetchPendingPurchases();
+  }, []);
+
+  const fetchPendingPurchases = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      console.log('Fetching pending purchases from:', API_ENDPOINTS.FARMER_FOOD_REQUESTS);
+      
+      const response = await fetch(API_ENDPOINTS.FARMER_FOOD_REQUESTS);
+      console.log('Response status:', response.status);
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: 'Failed to fetch pending purchases' }));
+        throw new Error(errorData.message || `Failed to fetch pending purchases: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log('Fetched pending purchases:', data);
+      
+      // Filter and format the data
+      const pending = data.filter(item => item.status === 'pending').map(item => ({
+        id: item._id,
+        produceType: item.croptype,
+        price: `$${item.price}`,
+        organization: item.ngo,
+        notes: item.additional,
+        status: 'pending'
+      }));
+      
+      const completed = data.filter(item => item.status === 'completed').map(item => ({
+        id: item._id,
+        produceType: item.croptype,
+        price: `$${item.price}`,
+        organization: item.ngo,
+        notes: item.additional,
+        status: 'completed'
+      }));
+
+      setPendingPurchases(pending);
+      setCompletedPurchases(completed);
+    } catch (error) {
+      console.error('Error fetching pending purchases:', error);
+      setError(error.message);
+      alert('Error fetching pending purchases: ' + error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handlePostProduce = async () => {
+    try {
+      // Validate required fields
+      if (!produceType) {
+        alert('Please enter the crop type');
+        return;
+      }
+
+      if (!selectedOrganization) {
+        alert('Please select an organization');
+        return;
+      }
+
+      // Prepare the request data
+      const requestData = {
+        croptype: produceType,
+        additional: additionalNotes,
+        activityType: activityType,
+        price: activityType === 'sale' ? parseFloat(priceOffer) || 0 : 0,
+        ngo: selectedOrganization,
+        status: 'pending'
+      };
+
+      console.log('Submitting food request:', requestData);
+
+      // Make the API call
+      const response = await fetch(API_ENDPOINTS.FARMER_FOOD_REQUESTS, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestData),
+      });
+
+      const responseData = await response.json();
+      console.log('API Response:', responseData);
+
+      if (!response.ok) {
+        throw new Error(responseData.message || `Failed to submit request: ${response.status}`);
+      }
+
+      // Show success message
+      setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 3000);
+
+      // Reset form
+      setProduceType('');
+      setAdditionalNotes('');
+      setPriceOffer('');
+      setActivityType('sale');
+      setSelectedOrganization('');
+
+      // Refresh the pending purchases list
+      fetchPendingPurchases();
+
+    } catch (error) {
+      console.error('Error submitting food request:', error);
+      alert(`Error submitting request: ${error.message}`);
+    }
   };
 
   const openModalForPendingPurchase = (purchase) => {
@@ -109,6 +212,22 @@ const FarmersDashboard = () => {
 
         <Text style={styles.welcome}>{t("farmers.welcome")}, John Smith! <Language /></Text>
 
+        {/* Loading and Error States */}
+        {isLoading && (
+          <View style={styles.loadingContainer}>
+            <Text style={styles.loadingText}>{t("common.loading")}</Text>
+          </View>
+        )}
+
+        {error && (
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>{error}</Text>
+            <TouchableOpacity style={styles.retryButton} onPress={fetchPendingPurchases}>
+              <Text style={styles.retryButtonText}>{t("common.retry")}</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
         {/* Farmer Stats */}
         <View style={styles.statsContainer}>
           {[
@@ -129,23 +248,23 @@ const FarmersDashboard = () => {
           <Text style={styles.sectionTitle}>{t("farmers.post")}</Text>
           
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>{t("farmers.crop-type")}</Text>
+            <Text style={styles.label}>{t("farmers.cropType")}</Text>
             <TextInput
               style={styles.input}
               value={produceType}
               onChangeText={setProduceType}
-              placeholder={t("farmers.crop-type-placeholder")}
+              placeholder={t("farmers.cropTypePlaceholder")}
               placeholderTextColor={COLORS.textSecondary}
             />
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>{t("farmers.additional-info")}</Text>
+            <Text style={styles.label}>{t("farmers.additionalInfo")}</Text>
             <TextInput
               style={[styles.input, styles.textArea]}
               value={additionalNotes}
               onChangeText={setAdditionalNotes}
-              placeholder={t("farmers.additional-info-placeholder")}
+              placeholder={t("farmers.additionalInfoPlaceholder")}
               placeholderTextColor={COLORS.textSecondary}
               multiline
               numberOfLines={4}
@@ -153,27 +272,27 @@ const FarmersDashboard = () => {
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>{t("farmers.activity-type")}</Text>
+            <Text style={styles.label}>{t("farmers.activityType")}</Text>
             <View style={styles.pickerContainer}>
               <Picker
                 selectedValue={activityType}
                 style={styles.picker}
                 onValueChange={(itemValue) => setActivityType(itemValue)}
               >
-                <Picker.Item label={t("farmers.activity-type-options.sale")} value="sale" />
-                <Picker.Item label={t("farmers.activity-type-options.donation")} value="donation" />
+                <Picker.Item label={t("farmers.activityTypeOptions.sale")} value="sale" />
+                <Picker.Item label={t("farmers.activityTypeOptions.donation")} value="donation" />
               </Picker>
             </View>
           </View>
 
           {activityType === "sale" && (
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>{t("farmers.price-offered")}</Text>
+              <Text style={styles.label}>{t("farmers.priceOffered")}</Text>
               <TextInput
                 style={styles.input}
                 value={priceOffer}
                 onChangeText={setPriceOffer}
-                placeholder={t("farmers.price-offered-placeholder")}
+                placeholder={t("farmers.priceOfferedPlaceholder")}
                 placeholderTextColor={COLORS.textSecondary}
                 keyboardType="numeric"
               />
@@ -181,14 +300,14 @@ const FarmersDashboard = () => {
           )}
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>{t("farmers.select-ngo-foodbank")}</Text>
+            <Text style={styles.label}>{t("farmers.selectNgoFoodbank")}</Text>
             <View style={styles.pickerContainer}>
               <Picker
                 selectedValue={selectedOrganization}
                 style={styles.picker}
                 onValueChange={setSelectedOrganization}
               >
-                <Picker.Item label="Select an organization" value="" />
+                <Picker.Item label={t("farmers.selectNgoFoodbankPlaceholder")} value="" />
                 {organizations.map((org) => (
                   <Picker.Item key={org.value} label={org.label} value={org.value} />
                 ))}
@@ -208,14 +327,14 @@ const FarmersDashboard = () => {
             <Text style={styles.successText}>
               {activityType === "sale"
                 ? t("farmers.success")
-                : t("farmers.donated-success")}
+                : t("farmers.donatedSuccess")}
             </Text>
           </View>
         )}
 
         {/* Pending Purchases */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>{t("farmers.pending-purchases")}</Text>
+          <Text style={styles.sectionTitle}>{t("farmers.pendingPurchases")}</Text>
           {pendingPurchases.map((purchase) => (
             <TouchableOpacity
               key={purchase.id}
@@ -243,7 +362,7 @@ const FarmersDashboard = () => {
 
         {/* Completed Purchases */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>{t("farmers.completed-purchases")}</Text>
+          <Text style={styles.sectionTitle}>{t("farmers.completedPurchases")}</Text>
           {completedPurchases.map((purchase) => (
             <View key={purchase.id} style={styles.purchaseCard}>
               <View style={styles.purchaseHeader}>
@@ -252,10 +371,10 @@ const FarmersDashboard = () => {
               </View>
               <View style={styles.purchaseDetails}>
                 <Text style={styles.purchaseText}>
-                  {t("farmers.buyer")}: {purchase.buyer}
+                  {t("farmers.organization")}: {purchase.organization}
                 </Text>
                 <Text style={styles.purchaseText}>
-                  {t("farmers.quantity")}: {purchase.quantity}
+                  {t("farmers.notes")}: {purchase.notes}
                 </Text>
               </View>
               <View style={[styles.purchaseStatus, styles.completedStatus]}>
@@ -276,12 +395,12 @@ const FarmersDashboard = () => {
         >
           <View style={styles.modalBackground}>
             <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>{t("farmers.update-purchase")}</Text>
+              <Text style={styles.modalTitle}>{t("farmers.updatePurchase")}</Text>
               <TextInput
                 style={styles.modalInput}
                 value={selectedPurchase.notes}
                 onChangeText={(text) => setSelectedPurchase({ ...selectedPurchase, notes: text })}
-                placeholder={t("farmers.update-notes")}
+                placeholder={t("farmers.updateNotes")}
                 placeholderTextColor={COLORS.textSecondary}
               />
               <View style={styles.modalButtons}>
@@ -538,6 +657,36 @@ const styles = StyleSheet.create({
   updateButtonText: {
     color: COLORS.white,
     fontSize: 16,
+    fontWeight: '600',
+  },
+  loadingContainer: {
+    padding: 16,
+    alignItems: 'center',
+  },
+  loadingText: {
+    fontSize: 16,
+    color: COLORS.textSecondary,
+  },
+  errorContainer: {
+    padding: 16,
+    backgroundColor: COLORS.error,
+    borderRadius: 8,
+    margin: 16,
+  },
+  errorText: {
+    color: COLORS.white,
+    fontSize: 14,
+    marginBottom: 8,
+  },
+  retryButton: {
+    backgroundColor: COLORS.white,
+    padding: 8,
+    borderRadius: 4,
+    alignSelf: 'flex-start',
+  },
+  retryButtonText: {
+    color: COLORS.error,
+    fontSize: 14,
     fontWeight: '600',
   },
 });

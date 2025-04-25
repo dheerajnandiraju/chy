@@ -1,5 +1,14 @@
 {
   "language": "Language",
+  "common": {
+    "loading": "Loading...",
+    "retry": "Retry",
+    "cancel": "Cancel",
+    "update": "Update",
+    "notes": "Notes",
+    "pending": "Pending",
+    "completed": "Completed"
+  },
 
   "foodFridges": {
     "header": "Food Fridges",
@@ -54,7 +63,7 @@
     "priceOffered": "Price Offered (If sale)",
     "priceOfferedPlaceholder": "Enter price offered",
     "selectNgoFoodbank": "Select NGO/Foodbank",
-    "selectNgoFoodbankPlaceholder": "Select NGO/Foodbank",
+    "selectNgoFoodbankPlaceholder": "Select an organization",
     "selectNgoFoodbankOptions": {
       "ngo": "NGO",
       "foodbank": "Foodbank"
@@ -66,7 +75,16 @@
     "completedPurchases": "Completed Purchases",
     "crop": "Crop",
     "buyer": "Buyer",
-    "quantity": "Quantity"
+    "quantity": "Quantity",
+    "notes": "Notes",
+    "pending": "Pending",
+    "completed": "Completed",
+    "success": "Successfully posted for sale!",
+    "donatedSuccess": "Successfully posted for donation!",
+    "updatePurchase": "Update Purchase Details",
+    "updateNotes": "Update notes",
+    "update": "Update",
+    "cancel": "Cancel"
   },
   "emergencyAlerts": {
     "raiseEmergency": "Raise an Emergency",
