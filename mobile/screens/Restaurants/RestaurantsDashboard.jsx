@@ -1,11 +1,19 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+} from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import Layout from './Layout';
 import { useAuth } from '../../context/AuthContext';
+import { API_ENDPOINTS, handleApiError } from '../../config/api';
 
 const styles = StyleSheet.create({
   screen: {
@@ -142,6 +150,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 24,
   },
+  buttonDisabled: {
+    backgroundColor: '#9CA3AF',
+    opacity: 0.7,
+  },
 });
 
 const RestaurantsDashboard = () => {
@@ -152,43 +164,67 @@ const RestaurantsDashboard = () => {
   const [items, setItems] = useState('');
   const [serveFor, setServeFor] = useState('');
   const [expireTime, setExpireTime] = useState({ days: '', hours: '' });
+  const [isLoading, setIsLoading] = useState(false);
 
   const handlePostMeal = async () => {
     try {
-      const orderData = {
-        restaurant: {
-          name: RestaurantName,
-          location: user?.address,
-          phoneNumber: user?.contactNumber,
+      if (!items || !serveFor) {
+        alert('Please fill in all required fields');
+        return;
+      }
+
+      setIsLoading(true);
+      console.log('Attempting to post meal to:', API_ENDPOINTS.RESTAURANT_POST);
+
+      const foodData = {
+        foodName: items,
+        serves: Number(serveFor),
+        expiry: {
+          days: Number(expireTime.days || 0),
+          hours: Number(expireTime.hours || 0),
         },
-        meal: items,
-        servings: serveFor,
-        expiration: {
-          days: expireTime.days,
-          hours: expireTime.hours,
+        address: user?.address || {
+          street: 'srinivasa colony rdno:1',
+          city: 'hyderabad',
+          pincode: '500035',
+          latitude: 0,
+          longitude: 0,
         },
       };
 
-      const response = await fetch('http://10.11.49.240:3000/api/orders', {
+      console.log('Sending food data:', foodData);
+
+      const response = await fetch(API_ENDPOINTS.RESTAURANT_POST, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
         },
-        body: JSON.stringify(orderData),
+        body: JSON.stringify(foodData),
       });
 
+      console.log('Response status:', response.status);
       const data = await response.json();
+      console.log('Response data:', data);
 
       if (response.ok) {
         alert('Meal posted successfully!');
-        console.log('Order posted:', data);
+        setItems('');
+        setServeFor('');
+        setExpireTime({ days: '', hours: '' });
+        console.log('Food posted:', data);
       } else {
-        alert('Failed to post meal: ' + data.error);
-        console.error('Error:', data.error);
+        const errorData = handleApiError({ response: { data, status: response.status } });
+        alert('Failed to post meal: ' + errorData.message);
+        console.error('Error:', errorData);
       }
     } catch (error) {
-      alert('Error occurred while posting the meal.');
-      console.error('Error:', error);
+      console.error('Full error object:', error);
+      const errorData = handleApiError(error);
+      alert('Error occurred while posting the meal: ' + errorData.message);
+      console.error('Error:', errorData);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -232,6 +268,7 @@ const RestaurantsDashboard = () => {
             placeholderTextColor="#6B7280"
             onChangeText={setItems}
             value={items}
+            editable={!isLoading}
           />
 
           <View style={styles.pickerContainer}>
@@ -239,6 +276,7 @@ const RestaurantsDashboard = () => {
               selectedValue={serveFor}
               onValueChange={(itemValue) => setServeFor(itemValue)}
               style={styles.picker}
+              enabled={!isLoading}
             >
               <Picker.Item label="Select number of people" value="" />
               {Array.from({ length: 100 }, (_, i) => i + 1).map((num) => (
@@ -257,6 +295,7 @@ const RestaurantsDashboard = () => {
                 placeholderTextColor="#6B7280"
                 onChangeText={(value) => setExpireTime({ ...expireTime, days: value })}
                 value={expireTime.days}
+                editable={!isLoading}
               />
               <TextInput
                 style={styles.timeInput}
@@ -265,12 +304,19 @@ const RestaurantsDashboard = () => {
                 placeholderTextColor="#6B7280"
                 onChangeText={(value) => setExpireTime({ ...expireTime, hours: value })}
                 value={expireTime.hours}
+                editable={!isLoading}
               />
             </View>
           </View>
 
-          <TouchableOpacity style={styles.button} onPress={handlePostMeal}>
-            <Text style={styles.buttonText}>Post Meal</Text>
+          <TouchableOpacity 
+            style={[styles.button, isLoading && styles.buttonDisabled]} 
+            onPress={handlePostMeal}
+            disabled={isLoading}
+          >
+            <Text style={styles.buttonText}>
+              {isLoading ? 'Posting...' : 'Post Meal'}
+            </Text>
           </TouchableOpacity>
         </View>
 

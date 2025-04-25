@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -11,62 +11,113 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../context/AuthContext';
+import { API_ENDPOINTS, handleApiError } from '../../config/api';
 
 const { width } = Dimensions.get('window');
 
 const VolunteerDashboard = () => {
   const [currentPage, setCurrentPage] = useState('main');
-  const [mealRequests, setMealRequests] = useState([]);
-
-  const {user} = useAuth();
-  console.log(user)
+  const [availableTasks, setAvailableTasks] = useState([]);
+  const [pendingTasks, setPendingTasks] = useState([]);
+  const { user } = useAuth();
 
   useEffect(() => {
-    fetchMealRequests();
-}, [currentPage]);
+    fetchAvailableTasks();
+    fetchPendingTasks();
+  }, []);
 
-const fetchMealRequests = async () => {
-  try {
-    const response = await fetch('http://10.11.49.240:3000/api/orders');
-    const data = await response.json();
-    console.log("Orders : ",data.orders)
-    const data1 = data.orders.filter(each => each.status === "In Progress");
-    console.log(data1)
-    setMealRequests(data1);
-  } catch (error) {
-    console.error('Error fetching meal requests:', error);
-  }
-};
-
- const handleAccept = async (orderId) => {
-   try{
-    const response = await fetch(`http://192.168.43.41:3000/api/orders/${orderId}/volunteer`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        name:user.fullName,
-        extra: user.address,
-        phoneNumber:user.contactNumber,
-      }),
-
-    });
-    console.log(response)
-
-    if (response.status === 200) {
-      alert('Order checked out successfully!');
-      setMealRequests(mealRequests.filter(order => order._id !== orderId));
+  const fetchAvailableTasks = async () => {
+    try {
+      const response = await fetch(API_ENDPOINTS.VOLUNTEER_TASKS);
+      const data = await response.json();
+      console.log('Available tasks:', data);
+      setAvailableTasks(data);
+    } catch (error) {
+      console.error('Error fetching available tasks:', error);
+      const errorData = handleApiError(error);
+      alert('Error fetching tasks: ' + errorData.message);
     }
+  };
 
-   }catch(error){
-     console.error('Error accepting meal request:', error);
-   }
- }
+  const fetchPendingTasks = async () => {
+    try {
+      const response = await fetch(API_ENDPOINTS.PENDING_TASKS);
+      const data = await response.json();
+      console.log('Pending tasks:', data);
+      setPendingTasks(data);
+    } catch (error) {
+      console.error('Error fetching pending tasks:', error);
+      const errorData = handleApiError(error);
+      alert('Error fetching pending tasks: ' + errorData.message);
+    }
+  };
+
+  const handleAcceptTask = async (taskId) => {
+    try {
+      console.log('Accepting task:', taskId);
+      const response = await fetch(API_ENDPOINTS.ACCEPT_TASK(taskId), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify({
+          taskId: taskId,
+          volunteerName: user?.fullName || 'Volunteer',
+          volunteerContact: user?.contactNumber || '1234567890',
+          deliveryStatus: 'Pending'
+        }),
+      });
+
+      console.log('Response status:', response.status);
+      const data = await response.json();
+      console.log('Response data:', data);
+
+      if (response.ok) {
+        alert('Task accepted successfully!');
+        // Refresh both lists
+        fetchAvailableTasks();
+        fetchPendingTasks();
+      } else {
+        alert('Failed to accept task: ' + data.message);
+      }
+    } catch (error) {
+      console.error('Error accepting task:', error);
+      const errorData = handleApiError(error);
+      alert('Error accepting task: ' + errorData.message);
+    }
+  };
+
+  const handleMarkDelivered = async (taskId) => {
+    try {
+      const response = await fetch(`${API_ENDPOINTS.PENDING_TASKS}/${taskId}/deliver`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          deliveryStatus: 'Delivered'
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert('Task marked as delivered!');
+        fetchPendingTasks(); // Refresh the list
+      } else {
+        alert('Failed to mark task as delivered: ' + data.message);
+      }
+    } catch (error) {
+      console.error('Error marking task as delivered:', error);
+      const errorData = handleApiError(error);
+      alert('Error marking task as delivered: ' + errorData.message);
+    }
+  };
 
   const renderMainDashboard = () => (
     <ScrollView>
-      <Text style={styles.welcome}>Welcome, John Doe!</Text>
+      <Text style={styles.welcome}>Welcome, {user?.fullName || 'Volunteer'}!</Text>
       <View style={styles.statsContainer}>
         <View style={styles.statBox}>
           <Text style={styles.statValue}>25</Text>
@@ -83,7 +134,7 @@ const fetchMealRequests = async () => {
       </View>
 
       <View style={styles.tasksContainer}>
-        <TouchableOpacity style={styles.taskButton} onPress={() => setCurrentPage('availableTasks')}>
+        <TouchableOpacity style={styles.taskButton} onPress={() => setCurrentPage('tasks')}>
           <Ionicons name="list-outline" size={24} color="#000" />
           <Text style={styles.taskButtonText}>Available Tasks</Text>
           <Ionicons name="chevron-forward" size={24} color="#000" />
@@ -136,57 +187,89 @@ const fetchMealRequests = async () => {
   );
 
   const renderAvailableTasks = () => (
-    <ScrollView>
+    <ScrollView style={styles.pageContainer}>
       <Text style={styles.pageTitle}>Available Tasks</Text>
-      {mealRequests.map(each =>(
-        <View style={styles.taskItem} key={each._id}>
-        <Image
-          source={require('../../assets/67.png')}
-          style={styles.taskImage}
-        />
-        <View style={styles.taskInfo}>
-          <Text style={styles.taskTitle}>Pickup: {each.restaurant.name}</Text>
-          <Text style={styles.taskSubtitle}>Delivery: {each.organization.name}</Text>
-        </View>
-        <TouchableOpacity style={styles.acceptButton} >
-          <Text style={styles.acceptButtonText} onPress={()=> handleAccept(each._id)}>Accept</Text>
-        </TouchableOpacity>
-      </View>
-      ))}
-      {/* Add more task items here */}
+      {availableTasks.length > 0 ? (
+        availableTasks.map((task) => (
+          <View key={task._id} style={styles.taskItem}>
+            <Image source={require('../../assets/67.png')} style={styles.taskImage} />
+            <View style={styles.taskInfo}>
+              <Text style={styles.taskTitle}>Pickup: {task.sender?.name || 'N/A'}</Text>
+              <Text style={styles.taskSubtitle}>Address: {task.sender?.address || 'N/A'}</Text>
+              <Text style={styles.taskDetails}>
+                Delivery To: {task.receiver?.name || 'N/A'}
+              </Text>
+              <Text style={styles.taskDetails}>
+                Delivery Address: {task.receiver?.address || 'N/A'}
+              </Text>
+              <Text style={styles.taskDetails}>
+                Food: {task.foodDetails?.foodName || 'N/A'}
+              </Text>
+              <Text style={styles.taskDetails}>
+                Servings: {task.foodDetails?.serves || 0}
+              </Text>
+              <TouchableOpacity
+                style={styles.acceptButton}
+                onPress={() => handleAcceptTask(task._id)}
+              >
+                <Text style={styles.acceptButtonText}>Accept</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        ))
+      ) : (
+        <Text style={styles.noDataText}>No tasks available at the moment.</Text>
+      )}
     </ScrollView>
   );
 
   const renderMyTasks = () => (
-    <ScrollView>
+    <ScrollView style={styles.pageContainer}>
       <Text style={styles.pageTitle}>My Tasks</Text>
-      <View style={styles.mapContainer}>
-        <Image
-          source={require('../../assets/77.png')}
-          style={styles.mapImage}
-        />
-      </View>
-      <View style={styles.taskList}>
-        <View style={styles.taskListItem}>
-          <Ionicons name="checkmark-circle" size={24} color="#4CAF50" />
-          <View style={styles.taskListItemContent}>
-            <Text style={styles.taskListText}>Task 1</Text>
-            <Text style={styles.taskListSubtext}>Delivered to Food Bank</Text>
+      {pendingTasks.length > 0 ? (
+        pendingTasks.map((task) => (
+          <View key={task._id} style={styles.taskItem}>
+            <Image source={require('../../assets/67.png')} style={styles.taskImage} />
+            <View style={styles.taskInfo}>
+              <Text style={styles.taskTitle}>Pickup: {task.taskId?.sender?.name || 'N/A'}</Text>
+              <Text style={styles.taskSubtitle}>Address: {task.taskId?.sender?.address || 'N/A'}</Text>
+              <Text style={styles.taskDetails}>
+                Delivery To: {task.taskId?.receiver?.name || 'N/A'}
+              </Text>
+              <Text style={styles.taskDetails}>
+                Delivery Address: {task.taskId?.receiver?.address || 'N/A'}
+              </Text>
+              <Text style={styles.taskDetails}>
+                Food: {task.taskId?.foodDetails?.foodName || 'N/A'}
+              </Text>
+              <Text style={styles.taskDetails}>
+                Servings: {task.taskId?.foodDetails?.serves || 0}
+              </Text>
+              <Text style={styles.taskDetails}>
+                Accepted: {new Date(task.acceptedAt).toLocaleString()}
+              </Text>
+              <Text style={styles.taskDetails}>
+                Status: {task.deliveryStatus}
+              </Text>
+              {task.deliveryStatus === 'Pending' && (
+                <TouchableOpacity
+                  style={styles.deliverButton}
+                  onPress={() => handleMarkDelivered(task._id)}
+                >
+                  <Text style={styles.deliverButtonText}>Mark as Delivered</Text>
+                </TouchableOpacity>
+              )}
+            </View>
           </View>
-        </View>
-        <View style={styles.taskListItem}>
-          <Ionicons name="time" size={24} color="#FFC107" />
-          <View style={styles.taskListItemContent}>
-            <Text style={styles.taskListText}>Task 2</Text>
-            <Text style={styles.taskListSubtext}>Pickup from Joe's Diner</Text>
-          </View>
-        </View>
-      </View>
+        ))
+      ) : (
+        <Text style={styles.noDataText}>No pending tasks at the moment.</Text>
+      )}
     </ScrollView>
   );
 
   const renderLeaderboard = () => (
-    <ScrollView>
+    <ScrollView style={styles.pageContainer}>
       <Text style={styles.pageTitle}>Leaderboard</Text>
       <View style={styles.leaderboardItem}>
         <Image
@@ -225,8 +308,9 @@ const fetchMealRequests = async () => {
         )}
         <Text style={styles.headerTitle}>Volunteer Dashboard</Text>
       </View>
+
       {currentPage === 'main' && renderMainDashboard()}
-      {currentPage === 'availableTasks' && renderAvailableTasks()}
+      {currentPage === 'tasks' && renderAvailableTasks()}
       {currentPage === 'myTasks' && renderMyTasks()}
       {currentPage === 'leaderboard' && renderLeaderboard()}
     </SafeAreaView>
@@ -344,55 +428,80 @@ const styles = StyleSheet.create({
     color: '#4CAF50',
     fontWeight: 'bold',
   },
+  pageContainer: {
+    padding: 16,
+  },
   pageTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    padding: 16,
+    marginBottom: 16,
   },
   taskItem: {
     flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    alignItems: 'flex-start',
+    marginBottom: 16,
+    padding: 12,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    elevation: 4,
   },
   taskImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    marginRight: 16,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
   },
   taskInfo: {
+    marginLeft: 12,
     flex: 1,
   },
   taskTitle: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '600',
+    color: '#1F2A44',
+    marginBottom: 4,
   },
   taskSubtitle: {
     fontSize: 14,
-    color: '#666',
+    color: '#6B7280',
+    marginBottom: 8,
+  },
+  taskDetails: {
+    fontSize: 14,
+    color: '#4B5563',
+    marginBottom: 4,
+    lineHeight: 20,
   },
   acceptButton: {
-    backgroundColor: '#4CAF50',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 4,
+    backgroundColor: '#10B981',
+    padding: 8,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 12,
   },
   acceptButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  noDataText: {
+    textAlign: 'center',
+    color: '#6B7280',
+    marginTop: 20,
   },
   mapContainer: {
-    padding: 16,
+    marginBottom: 16,
   },
   mapImage: {
     width: '100%',
     height: 200,
-    borderRadius: 8,
+    borderRadius: 12,
+    elevation: 4,
   },
   taskList: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
     padding: 16,
+    elevation: 4,
   },
   taskListItem: {
     flexDirection: 'row',
@@ -400,15 +509,17 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   taskListItemContent: {
-    marginLeft: 16,
+    marginLeft: 12,
+    flex: 1,
   },
   taskListText: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '600',
+    color: '#1F2A44',
   },
   taskListSubtext: {
     fontSize: 14,
-    color: '#666',
+    color: '#6B7280',
   },
   leaderboardItem: {
     flexDirection: 'row',
@@ -431,6 +542,18 @@ const styles = StyleSheet.create({
   leaderboardScore: {
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  deliverButton: {
+    backgroundColor: '#4CAF50',
+    padding: 8,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 12,
+  },
+  deliverButtonText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '600',
   },
 });
 

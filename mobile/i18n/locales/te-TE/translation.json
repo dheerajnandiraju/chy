@@ -1,5 +1,14 @@
 {
   "language": "భాష",
+  "common": {
+    "loading": "లోడ్ అవుతోంది...",
+    "retry": "మళ్లీ ప్రయత్నించండి",
+    "cancel": "రద్దు చేయండి",
+    "update": "నవీకరించండి",
+    "notes": "గమనికలు",
+    "pending": "ప్రతిష్టిత",
+    "completed": "పూర్తయింది"
+  },
 
   "foodFridges": {
     "header": "ఆహార ఫ్రిడ్జ్‌లు",
@@ -54,7 +63,7 @@
     "priceOffered": "అమ్మకానికి ధర",
     "priceOfferedPlaceholder": "అమ్మకానికి ధర నమోదు చేయండి",
     "selectNgoFoodbank": "NGO/ఫుడ్‌బ్యాంక్ ఎంచుకోండి",
-    "selectNgoFoodbankPlaceholder": "NGO/ఫుడ్‌బ్యాంక్ ఎంచుకోండి",
+    "selectNgoFoodbankPlaceholder": "సంస్థను ఎంచుకోండి",
     "selectNgoFoodbankOptions": {
       "ngo": "NGO",
       "foodbank": "ఫుడ్‌బ్యాంక్"
@@ -66,7 +75,16 @@
     "completedPurchases": "పూర్తి కొనుగోళ్లు",
     "crop": "పంట",
     "buyer": "కొనుగోలుదారు",
-    "quantity": "పరిమాణం"
+    "quantity": "పరిమాణం",
+    "notes": "గమనికలు",
+    "pending": "ప్రతిష్టిత",
+    "completed": "పూర్తయింది",
+    "success": "అమ్మకానికి విజయవంతంగా పోస్ట్ చేయబడింది!",
+    "donatedSuccess": "దానానికి విజయవంతంగా పోస్ట్ చేయబడింది!",
+    "updatePurchase": "కొనుగోలు వివరాలను నవీకరించండి",
+    "updateNotes": "గమనికలను నవీకరించండి",
+    "update": "నవీకరించండి",
+    "cancel": "రద్దు చేయండి"
   },
   "emergencyAlerts": {
     "raiseEmergency": "అపద్గతిని ఉత్పత్తి చేయండి",

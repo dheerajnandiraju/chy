@@ -1,5 +1,14 @@
 {
   "language": "भाषा",
+  "common": {
+    "loading": "लोड हो रहा है...",
+    "retry": "पुनः प्रयास करें",
+    "cancel": "रद्द करें",
+    "update": "अपडेट करें",
+    "notes": "नोट्स",
+    "pending": "लंबित",
+    "completed": "पूर्ण"
+  },
 
   "foodFridges": {
     "header": "फ़ूड फ्रिज़",
@@ -54,7 +63,7 @@
     "priceOffered": "मूल्य (यदि बिक्री है)",
     "priceOfferedPlaceholder": "मूल्य दर्ज करें",
     "selectNgoFoodbank": "NGO/फ़ूडबैंक चुनें",
-    "selectNgoFoodbankPlaceholder": "NGO/फ़ूडबैंक चुनें",
+    "selectNgoFoodbankPlaceholder": "संगठन चुनें",
     "selectNgoFoodbankOptions": {
       "ngo": "NGO",
       "foodbank": "फ़ूडबैंक"
@@ -66,7 +75,16 @@
     "completedPurchases": "पूरा हुआ खरीदारी",
     "crop": "फसल",
     "buyer": "खरीदार",
-    "quantity": "मात्रा"
+    "quantity": "मात्रा",
+    "notes": "नोट्स",
+    "pending": "लंबित",
+    "completed": "पूर्ण",
+    "success": "बिक्री के लिए सफलतापूर्वक पोस्ट किया गया!",
+    "donatedSuccess": "दान के लिए सफलतापूर्वक पोस्ट किया गया!",
+    "updatePurchase": "खरीदारी विवरण अपडेट करें",
+    "updateNotes": "नोट्स अपडेट करें",
+    "update": "अपडेट करें",
+    "cancel": "रद्द करें"
   },
   "emergencyAlerts": {
     "raiseEmergency": "आपातकाल उठाएं",
