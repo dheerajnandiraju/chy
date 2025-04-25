@@ -1,39 +1,66 @@
 import React from 'react';
-import { View, Text, Button, StyleSheet, ScrollView, Image, ImageBackground, TouchableOpacity } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';  // Import FontAwesome icons (or any other icon set)
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+  Image,
+  ImageBackground,
+} from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
 
 const LandingPage = () => {
   const navigation = useNavigation();
+
   return (
     <ScrollView style={styles.container}>
-      {/* Image Background Section with Overlay Text */}
-
+      {/* Logo and Role Selection Section */}
       <View style={styles.buttonSection}>
-      <Image style={styles.logo} source={require('../assets/wText.png')} />
-        <Text style={styles.sectionTitle}>Be A Part of the Change</Text>
+        <Image style={styles.logo} source={require('../assets/wText.png')} />
+        <Text style={styles.sectionTitle}>Choose Your Role to Continue</Text>
         <View style={styles.buttonContainer}>
-          {/* Sign Up Button */}
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.button}
-            onPress={() => navigation.navigate('LoginScreen')}
+            onPress={() => navigation.navigate('HomePage')}
           >
-            <Text style={styles.buttonText}>Sign Up</Text>
+            <Text style={styles.buttonText}>I am a Restaurant</Text>
           </TouchableOpacity>
 
-          {/* Donate Now Button */}
-          <TouchableOpacity 
-            style={[styles.button, styles.donateButton]}
-            onPress={() => alert('Donate Now pressed')}
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => navigation.navigate('VolunteerDashboard')}
           >
-            <Text style={styles.buttonText}>Donate Now</Text>
+            <Text style={styles.buttonText}>I am a Volunteer</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => navigation.navigate('Oldage')}
+          >
+            <Text style={styles.buttonText}>I am an NGO</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => navigation.navigate('FarmersDashboard')}
+          >
+            <Text style={styles.buttonText}>I am a Farmer</Text>
           </TouchableOpacity>
         </View>
+
+        <TouchableOpacity
+          style={[styles.button, styles.donateButton]}
+          onPress={() => alert('Donate Now pressed')}
+        >
+          <Text style={styles.buttonText}>Donate Now</Text>
+        </TouchableOpacity>
       </View>
 
-
-      <ImageBackground 
-        source={require('../assets/0.png')}  // Placeholder for background image
+      {/* Background Image with Overlay */}
+      <ImageBackground
+        source={require('../assets/0.png')}
         style={styles.imageBackground}
         imageStyle={styles.image}
       >
@@ -54,7 +81,7 @@ const LandingPage = () => {
         </View>
       </View>
 
-      {/* Feature Highlights Section (using Horizontal ScrollView) */}
+      {/* Feature Highlights */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Feature Highlights</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.featureScroll}>
@@ -65,7 +92,7 @@ const LandingPage = () => {
         </ScrollView>
       </View>
 
-      {/* Impact Metrics Section as Carousel */}
+      {/* Impact Metrics */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Impact Metrics</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.metricsScroll}>
@@ -76,7 +103,7 @@ const LandingPage = () => {
         </ScrollView>
       </View>
 
-      {/* Leaderboard Section (Horizontal ScrollView) */}
+      {/* Leaderboard */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Leaderboard</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.metricsScroll}>
@@ -86,7 +113,7 @@ const LandingPage = () => {
         </ScrollView>
       </View>
 
-      {/* Testimonials Section (Horizontal ScrollView) */}
+      {/* Testimonials */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Testimonials</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.metricsScroll}>
@@ -96,48 +123,38 @@ const LandingPage = () => {
         </ScrollView>
       </View>
 
-      {/* Call to Action Section */}
-
-
       {/* Footer */}
       <Text style={styles.footerText}>© 2023 Motiff AI. All rights reserved.</Text>
     </ScrollView>
   );
 };
 
-// MetricCard Component with Circular Icon and Label
-const MetricCard = ({ icon, label, value }) => {
-  return (
-    <View style={styles.metricCard}>
-      <View style={styles.iconContainer}>
-        <Icon name={icon} size={40} color="black" style={styles.icon} />
-      </View>
-      <Text style={styles.metricLabel}>{label}</Text>
-      <Text style={styles.metricValue}>{value}</Text>
+// Metric Card Component
+const MetricCard = ({ icon, label, value }) => (
+  <View style={styles.metricCard}>
+    <View style={styles.iconContainer}>
+      <Icon name={icon} size={40} color="black" style={styles.icon} />
     </View>
-  );
-};
+    <Text style={styles.metricLabel}>{label}</Text>
+    <Text style={styles.metricValue}>{value}</Text>
+  </View>
+);
 
 // Card Component
-const Card = ({ title, content, subContent, imageUrl }) => {
-  return (
-    <View style={styles.card}>
-      {/* Image */}
-      {imageUrl && <Image source={imageUrl} style={styles.cardImage} />}
-      
-      {title && <Text style={styles.cardTitle}>{title}</Text>}
-      {content && <Text style={styles.cardContent}>{content}</Text>}
-      {subContent && <Text style={styles.cardSubContent}>{subContent}</Text>}
-    </View>
-  );
-};
+const Card = ({ title, content, subContent, imageUrl }) => (
+  <View style={styles.card}>
+    {imageUrl && <Image source={imageUrl} style={styles.cardImage} />}
+    {title && <Text style={styles.cardTitle}>{title}</Text>}
+    {content && <Text style={styles.cardContent}>{content}</Text>}
+    {subContent && <Text style={styles.cardSubContent}>{subContent}</Text>}
+  </View>
+);
 
 // Styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    marginTop:'10',
     backgroundColor: '#f9f9f9',
   },
   imageBackground: {
@@ -153,9 +170,9 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   overlay: {
-    alignItems: 'left',
+    alignItems: 'flex-start',
     justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0, 0, 0, 0.4)', // Dark overlay to improve text visibility
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
     width: '100%',
     height: '100%',
     padding: 10,
@@ -164,12 +181,10 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: '600',
     color: '#fff',
-    marginTop: 10,
   },
   mutedText: {
     fontSize: 16,
     color: '#ccc',
-    marginTop: 5,
   },
   section: {
     marginTop: 20,
@@ -196,7 +211,7 @@ const styles = StyleSheet.create({
   card: {
     padding: 1,
     borderRadius: 8,
-    width: 150,  // Keep the width smaller for non-carousel cards like in How It Works
+    width: 150,
     marginBottom: 20,
     marginRight: 10,
   },
@@ -220,33 +235,29 @@ const styles = StyleSheet.create({
     color: '#777',
   },
   buttonSection: {
-    justifyContent:'center',
-    alignItems:'center',
-    height:500,
+    justifyContent: 'center',
+    alignItems: 'center',
     marginTop: 20,
-    alignItems: 'center', // Center align the buttons
   },
   buttonContainer: {
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 10,
-    width: '100%', // Full width for buttons
+    width: '100%',
   },
   button: {
-    backgroundColor: '#00dcf6', // Blue color for the Sign Up button
+    backgroundColor: '#00dcf6',
     paddingVertical: 10,
     paddingHorizontal: 40,
-    borderRadius: 10,  // Rounded corners
+    borderRadius: 10,
     marginBottom: 10,
-    alignItems: 'center', // Center text inside button
+    alignItems: 'center',
     justifyContent: 'center',
-    width:'90%' // For Android shadow
+    width: '90%',
   },
   donateButton: {
-    backgroundColor: '#dbe2e3', // Green color for Donate Now button
-    borderRadius: 10, // Keep border radius the same for a unified look
-    width: '90%', // Make the button slightly smaller
+    backgroundColor: '#dbe2e3',
   },
   buttonText: {
     color: '#fff',
@@ -259,25 +270,16 @@ const styles = StyleSheet.create({
     color: '#aaa',
     marginTop: 40,
   },
-
-  // Styles for the Impact Metrics section with Circular Icons
-  metricsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 20,
-    flexWrap: 'wrap',
-  },
   metricCard: {
     alignItems: 'center',
-    width: 170,  // Set width to 180 for consistency across carousel cards only
-    height:'5vh',
-    marginRight: 20,  // Space between cards
+    width: 170,
+    marginRight: 20,
     padding: 20,
-    backgroundColor: '#fff',  // White background for each card
+    backgroundColor: '#fff',
     borderRadius: 10,
   },
   iconContainer: {
-    backgroundColor: 'white', // Blue color for circle background
+    backgroundColor: 'white',
     borderRadius: 50,
     padding: 15,
     marginBottom: 10,
@@ -296,11 +298,11 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#333',
   },
-  logo:{
-    height:200,
-    width:200,
-    margin:30,
-  }
+  logo: {
+    height: 200,
+    width: 200,
+    margin: 30,
+  },
 });
 
 export default LandingPage;

@@ -21,6 +21,7 @@ import PurchaseDetails from './screens/farmers/PurchaseDetails';
 import OldAgeHomesDashboard from './screens/oldage/Oldage';
 import Quality from './screens/oldage/Quality';
 import './i18n';
+import RoleSelectionScreen from './screens/RoleSelectionScreen';
 
 const Stack = createStackNavigator();
 
@@ -29,10 +30,11 @@ export default function App() {
     <AuthProvider>
     <NavigationContainer>
 
-      <Stack.Navigator initialRouteName="LandingPage" screenOptions={{headerShown: false}}>
+      <Stack.Navigator initialRouteName="LandingPage">
         <Stack.Screen name="LandingPage" component={LandingPage} />
-        <Stack.Screen name="LoginScreen" component={LoginScreen}/>
-        <Stack.Screen name="RegisterScreen" component={RegisterScreen}/>
+        {/* <Stack.Screen name="LoginScreen" component={LoginScreen}/>
+        <Stack.Screen name="RegisterScreen" component={RegisterScreen}/> */}
+        <Stack.Screen name='RoleSelectionPage' component={RoleSelectionScreen}/>
         <Stack.Screen name='RestaurantsDashboard' component={RestaurantsDashboard}/>
         <Stack.Screen name="FoodFridges" component={FoodFridges}/>
         <Stack.Screen name="VolunteerDashboard" component={VolunteerDashboard}/>
