@@ -1,6 +1,6 @@
 // API Configuration
-const DEV_API_URL = 'http://10.10.6.234:5000';  // For physical devices
-const PROD_API_URL = 'http://10.10.6.234:5000'; // For physical devices
+const DEV_API_URL = 'http://192.168.205.2:5000';  // For physical devices
+const PROD_API_URL = 'http://192.168.205.2:5000'; // For physical devices
 
 // Determine which API URL to use based on environment
 const API_BASE_URL = __DEV__ ? DEV_API_URL : PROD_API_URL;

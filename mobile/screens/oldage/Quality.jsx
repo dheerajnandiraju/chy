@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Image, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { Language } from '../../components/language';
 
-// Updated color palette to match other screens
 const COLORS = {
-  background: '#F9FAFB',   // Soft gray-white background
-  primary: '#10B981',     // Vibrant green for primary actions
-  secondary: '#6EE7B7',   // Lighter green for gradients
-  accent: '#F59E0B',      // Warm yellow for highlights
-  textPrimary: '#1F2937', // Dark gray for primary text
-  textSecondary: '#6B7280', // Lighter gray for secondary text
+  background: '#F9FAFB',
+  primary: '#10B981',
+  secondary: '#6EE7B7',
+  accent: '#F59E0B',
+  textPrimary: '#1F2937',
+  textSecondary: '#6B7280',
   white: '#FFFFFF',
   cardBg: '#FFFFFF',
   error: '#EF4444',
@@ -20,27 +18,20 @@ const COLORS = {
 };
 
 const Quality = () => {
-  // State hooks
   const [isOpen, setIsOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState('Food Quality');
   const [comments, setComments] = useState('');
   const [selectedImage, setSelectedImage] = useState(null);
 
-  // Dropdown options
   const options = ['Food Quality', 'Quantity', 'Packaging', 'Other Issues'];
 
-  // Function to toggle dropdown
-  const toggleDropdown = () => {
-    setIsOpen(!isOpen);
-  };
+  const toggleDropdown = () => setIsOpen(!isOpen);
 
-  // Handle option selection from dropdown
   const handleOptionSelect = (option) => {
     setSelectedOption(option);
     setIsOpen(false);
   };
 
-  // Request media library permissions
   const requestImagePermissions = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
@@ -48,135 +39,116 @@ const Quality = () => {
     }
   };
 
-  // Launch image picker
   const launchImagePickerHandler = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaType: ImagePicker.MediaTypeOptions.Images,
       quality: 1,
     });
 
-    if (!result.cancelled) {
-      const imageUri = result.assets[0].uri;
-      setSelectedImage(imageUri);
+    if (!result.canceled && result.assets?.length > 0) {
+      setSelectedImage(result.assets[0].uri);
     }
   };
 
-  // Submit feedback
-  const handleSubmitFeedback = () => {
-    console.log('Submitting feedback:', comments);
-    setComments('');
-  };
+  // 💡 Submit feedback to backend
+  const handleSubmitFeedback = async () => {
+    if (!comments.trim()) {
+      Alert.alert('Error', 'Please add comments before submitting.');
+      return;
+    }
 
-  // Request permissions when component mounts
+    const formData = new FormData();
+formData.append('issueType', selectedOption);
+formData.append('comments', comments);
+formData.append('image', {
+  uri: selectedImage,
+  name: 'feedback.jpg',
+  type: 'image/jpeg',
+});
+
+try {
+  const response = await fetch('http://192.168.205.2:5000/api/feedbacks/quality-check', {
+    method: 'POST',
+    body: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+
+  const data = await response.json();
+
+  if (response.ok) {
+    Alert.alert('Success', `Feedback submitted!\n\nAI Response:\n${data.feedbackText}`);
+    setComments('');
+    setSelectedImage(null);
+  } else {
+    Alert.alert('Error', data.error || 'Submission failed');
+  }
+} catch (error) {
+  console.error('❌ Submission error:', error);
+  Alert.alert('Error', 'Network request failed. Please check server or IP address.');
+}
+};
+
   useEffect(() => {
     requestImagePermissions();
   }, []);
 
   return (
     <ScrollView style={styles.screen} showsVerticalScrollIndicator={false}>
-    
-
-      {/* Title and Icon */}
+      {/* Header */}
       <View style={styles.header}>
         <Icon name="restaurant" size={24} color={COLORS.textPrimary} />
         <Text style={styles.title}>Food Quality Verification</Text>
       </View>
+
       <Text style={styles.description}>
-        Your feedback helps us improve food redistribution services. Please take a moment to share your experience with the food delivery you received.
-      </Text>
+    Your feedback helps improve food redistribution. Share your thoughts below!
+  </Text>
 
-      {/* Delivery Confirmation Section */}
-      <Text style={styles.sectionTitle}>Delivery Confirmation</Text>
-      <View style={styles.container}>
-        <TouchableOpacity style={styles.confirmButton}>
-          <Text style={styles.buttonText}>Confirm Delivery</Text>
-        </TouchableOpacity>
-       
-      </View>
+  <Text style={styles.sectionTitle}>Feedback Form</Text>
 
-      {/* Feedback Form Section */}
-      <Text style={styles.sectionTitle}>Feedback Form</Text>
-      <View style={styles.container}>
-        {/* Dropdown Menu for Issue Selection */}
-        <TouchableOpacity style={styles.dropdownButton} onPress={toggleDropdown}>
-          <Text style={styles.dropdownText}>{selectedOption}</Text>
-          <Icon name="chevron-down" size={18} color={COLORS.textPrimary} />
-        </TouchableOpacity>
-        {isOpen && (
-          <View style={styles.dropdownOptions}>
-            {options.map((option) => (
-              <TouchableOpacity
-                key={option}
-                style={styles.dropdownOption}
-                onPress={() => handleOptionSelect(option)}
-              >
-                <Text style={styles.dropdownOptionText}>{option}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        )}
-      </View>
+  <TouchableOpacity style={styles.dropdownButton} onPress={toggleDropdown}>
+    <Text style={styles.dropdownText}>{selectedOption}</Text>
+    <Icon name="chevron-down" size={18} color={COLORS.textPrimary} />
+  </TouchableOpacity>
 
-      {/* Additional Comments Section */}
-      <View style={styles.container}>
-        <Text style={styles.sectionSubtitle}>Additional Comments</Text>
-        <TextInput
-          style={styles.commentInput}
-          placeholder="Enter your comments here"
-          placeholderTextColor={COLORS.textSecondary}
-          multiline={true}
-          value={comments}
-          onChangeText={setComments}
-        />
-        <TouchableOpacity style={styles.confirmButton} onPress={handleSubmitFeedback}>
-          <Text style={styles.buttonText}>Submit Feedback</Text>
-        </TouchableOpacity>
-      </View>
+  {isOpen &&
+    options.map((option) => (
+      <TouchableOpacity
+        key={option}
+        style={styles.dropdownOption}
+        onPress={() => handleOptionSelect(option)}
+      >
+        <Text style={styles.dropdownOptionText}>{option}</Text>
+      </TouchableOpacity>
+    ))}
 
-      {/* Photo Upload Section */}
-      <Text style={styles.sectionTitle}>Photo Upload</Text>
-      <Text style={styles.description}>
-        You can upload photos to help us visually verify the quality of the food you received. This is optional but highly appreciated.
-      </Text>
-      <View style={styles.upload}>
-        <TouchableOpacity onPress={launchImagePickerHandler} style={styles.uploadButton}>
-          {selectedImage ? (
-            <View style={styles.uploadImageContainer}>
-              <Image source={{ uri: selectedImage }} style={styles.uploadImage} />
-            </View>
-          ) : (
-            <Text style={styles.uploadText}>Upload Image</Text>
-          )}
-        </TouchableOpacity>
-      </View>
+  <TextInput
+    style={styles.commentInput}
+    placeholder="Enter your comments"
+    placeholderTextColor={COLORS.textSecondary}
+    multiline
+    value={comments}
+    onChangeText={setComments}
+  />
 
-      {/* Real-Time Reporting Section */}
-      <Text style={styles.sectionTitle}>Real-Time Reporting</Text>
-      <Text style={styles.description}>
-        If you encounter any issues with your food delivery, please report them immediately. An automated alert will be sent to the admin for resolution.
-      </Text>
-      <View style={styles.card}>
-        <View style={styles.cardContent}>
-          <Image source={require('../../assets/92.png')} style={styles.cardImage} />
-          <View>
-            <Text style={styles.cardTitle}>Average Food Quality</Text>
-            <Text style={styles.cardSubtitle}>3.9</Text>
-          </View>
-        </View>
-      </View>
-      <View style={[styles.card, { marginBottom: 100 }]}>
-        <View style={styles.cardContent}>
-          <Image source={require('../../assets/93.png')} style={styles.cardImage} />
-          <View>
-            <Text style={styles.cardTitle}>Most Common Issue</Text>
-            <Text style={styles.cardSubtitle}>Quality, Packaging</Text>
-          </View>
-        </View>
-      </View>
-    </ScrollView>
+  <TouchableOpacity onPress={launchImagePickerHandler} style={styles.uploadButton}>
+    {selectedImage ? (
+      <Image source={{ uri: selectedImage }} style={styles.uploadImage} />
+    ) : (
+      <Text style={styles.uploadText}>Upload Image</Text>
+    )}
+  </TouchableOpacity>
+
+  <TouchableOpacity style={styles.confirmButton} onPress={handleSubmitFeedback}>
+    <Text style={styles.buttonText}>Submit Feedback</Text>
+  </TouchableOpacity>
+</ScrollView>
+
+      
   );
 };
-
 const styles = StyleSheet.create({
   screen: {
     flex: 1,

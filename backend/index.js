@@ -9,6 +9,7 @@ const requestRoutes = require('./routes/requestRoutes');
 const volunteerRoutes = require('./routes/volunteerRoutes');
 const deliveryRoutes = require('./routes/deliveryRoutes');
 const farmerFoodRoutes = require('./routes/farmerfood');
+const feedbackRoutes = require('./routes/feedbackRoutes');
 
 const app = express();
 
@@ -44,6 +45,7 @@ app.use('/api/request', requestRoutes);
 app.use('/api/volunteer', volunteerRoutes);
 app.use('/api/delivery', deliveryRoutes);
 app.use('/api/farmer', farmerFoodRoutes);
+app.use('/api/feedbacks', feedbackRoutes);
 
 // MongoDB Connection
 connectDB(); // Connects to MongoDB
